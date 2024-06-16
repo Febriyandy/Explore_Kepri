@@ -1,20 +1,30 @@
+import 'package:explore_kepri/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:explore_kepri/screens/onbording.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 
-void main() {
+void main() async {
+  // Inisialisasi Firebase sebelum menjalankan aplikasi
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Jalankan aplikasi
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Explore Kepri',
       debugShowCheckedModeBanner: false,
-      home: AnimatedSplashScreen( //membuat tampilan spalsh screen
+      home: AnimatedSplashScreen(
+        // Tampilan splash screen dengan animasi
         splash: LayoutBuilder(
           builder: (context, constraints) {
             return Center(
@@ -27,11 +37,10 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
-        duration: 3000,
-        splashTransition: SplashTransition.fadeTransition,
-        nextScreen: const OnbordingView(),
+        duration: 3000, // Durasi splash screen (dalam milidetik)
+        splashTransition: SplashTransition.fadeTransition, // Transisi animasi
+        nextScreen: const OnbordingView(), // Layar selanjutnya setelah splash screen
       ),
     );
   }
 }
-

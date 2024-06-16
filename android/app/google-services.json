@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "896636292966",
+    "project_id": "explore-kepri-313f6",
+    "storage_bucket": "explore-kepri-313f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896636292966:android:4035ef299be8cfea6882a7",
+        "android_client_info": {
+          "package_name": "com.example.explore_kepri"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfHx_vtxfAkvVw9Pe0kt-a9hKnZQ3CaJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
