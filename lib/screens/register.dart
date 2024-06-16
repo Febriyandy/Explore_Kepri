@@ -1,23 +1,25 @@
-import 'package:explore_kepri/screens/register.dart';
+import 'package:explore_kepri/screens/login.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
   bool isHide = true;
-
+  final TextEditingController namaController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confPasswordController = TextEditingController();
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset:
-            false, // Menonaktifkan pergeseran otomatis saat keyboard muncul
         body: SingleChildScrollView(
           child: Container(
             decoration: const BoxDecoration(
@@ -50,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Selamat Datang",
+                          "Daftar Akun",
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontFamily: "PoppinsSemiBold",
@@ -60,7 +62,7 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                         Text(
-                          "Masukkan email dan password",
+                          "Mohon isi data berikut dengan benar",
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontFamily: "Poppins",
@@ -83,7 +85,7 @@ class _LoginViewState extends State<LoginView> {
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
                           width: 350,
-                          height: 500,
+                          height: 530,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20.0),
@@ -99,6 +101,49 @@ class _LoginViewState extends State<LoginView> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Text(
+                                    "Nama Lengkap",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: darkColor,
+                                    ),
+                                  ),
+                                ),
+                                TextFormField(
+                                  controller: namaController,
+                                  style: TextStyle(
+                                      color: darkColor,
+                                      fontSize: 14,
+                                      fontFamily: "Poppins"),
+                                  decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 12.5, horizontal: 14),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.none)),
+                                      hintText: "Masukkan Nama Lengkap",
+                                      hintStyle: TextStyle(
+                                        color: grayColor,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins",
+                                      ),
+                                      fillColor: Colors.white.withOpacity(0.5),
+                                      filled: true,
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: darkColor, width: 2.0))),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                                  child: Text(
                                     "Email",
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
@@ -110,6 +155,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
+                                  controller: emailController,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -154,6 +200,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
+                                  controller: passwordController,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -197,25 +244,68 @@ class _LoginViewState extends State<LoginView> {
                                           borderSide: BorderSide(
                                               color: darkColor, width: 2.0))),
                                 ),
-                                Padding(
+                                 Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      "Lupa Password?",
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: darkColor,
-                                      ),
+                                      const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                                  child: Text(
+                                    "Konfirmasi Password",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: darkColor,
                                     ),
                                   ),
                                 ),
-                                // Add space between text fields and button
+                                TextFormField(
+                                  controller: confPasswordController,
+                                  obscureText: isHide,
+                                  style: TextStyle(
+                                      color: darkColor,
+                                      fontSize: 14,
+                                      fontFamily: "Poppins"),
+                                  decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            isHide = !isHide;
+                                          });
+                                        },
+                                        icon: Icon(
+                                          isHide
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: grayColor,
+                                          size: 18,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 12.5, horizontal: 14),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.none)),
+                                      hintText: "Konfirmasi Password",
+                                      hintStyle: TextStyle(
+                                        color: grayColor,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins",
+                                      ),
+                                      fillColor: Colors.white.withOpacity(0.5),
+                                      filled: true,
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: darkColor, width: 2.0))),
+                                ),
+                                const SizedBox(height: 20),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: (){}, 
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
@@ -229,7 +319,7 @@ class _LoginViewState extends State<LoginView> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Text(
-                                      "Masuk",
+                                      "Daftar",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontFamily: "Poppins",
@@ -239,67 +329,14 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical:
-                                            20.0), // Sesuaikan dengan kebutuhan Anda
-                                    child: Text(
-                                      "Atau",
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                        color: darkColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 13.5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/google.png",
-                                          width: 21,
-                                          height: 21,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 14.0),
-                                          child: Text(
-                                            "Masuk dengan Google",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontFamily: "Poppins",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: darkColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                               
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 30),
+                                  padding: const EdgeInsets.only(top: 20),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Belum punya akun? ",
+                                        "Sudah punya akun? ",
                                         style: TextStyle(
                                             fontFamily: "Poppins",
                                             fontSize: 14,
@@ -311,11 +348,11 @@ class _LoginViewState extends State<LoginView> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const RegisterView()),
+                                                  const  LoginView()),
                                           );
                                         },
                                         child: Text(
-                                          "Daftar Sekarang",
+                                          "Masuk Sekarang",
                                           style: TextStyle(
                                               fontFamily: "PoppinsSemiBold",
                                               fontSize: 14,
