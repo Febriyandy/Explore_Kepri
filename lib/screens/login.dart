@@ -278,7 +278,9 @@ class _LoginViewState extends State<LoginView> {
                                 ),
 
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                   _loginGoogle();
+                                  },
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
@@ -365,6 +367,14 @@ class _LoginViewState extends State<LoginView> {
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
+
+  _loginGoogle() async{
+    final users = await auth.loginWithGoogle();
+     if (users != null) {
+      log("User Logged In");
+      goToHome(context);
+    }
+  }
 
   _login() async {
     final user =

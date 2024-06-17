@@ -1,8 +1,6 @@
 import 'package:explore_kepri/controllers/auth_contriller.dart';
-import 'package:explore_kepri/screens/onbording.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,58 +10,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final auth = AuthContriller();
+
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Hello World',
-              style: TextStyle(fontSize: 24),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/latarbelakang.png'),
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 20), // Menambahkan jarak antara teks dan tombol
-            GestureDetector(
-              onTap: () async{
-                await auth.signout();
-                goToLogin(context);
-              },
-              child: Container(
-                width: 200,
-                padding: const EdgeInsets.symmetric(vertical: 13.5),
-                decoration: BoxDecoration(
-                  gradient:  LinearGradient(
-                    colors: [darkColor, primary],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  "Keluar",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+          ),
+          height: MediaQuery.of(context).size.height, // Menggunakan tinggi layar penuh
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 20, 0),
+                  child: Image.asset(
+                    'assets/images/Logo.png',
+                    width: 150,
+                    height: 100,
                   ),
                 ),
               ),
-            ),
-          ],
+              // Tambahkan konten lain di sini
+            ],
+          ),
         ),
       ),
     );
   }
-  goToLogin(BuildContext context) => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const OnbordingView()),
-      );
 }
-
