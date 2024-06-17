@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:explore_kepri/controllers/auth_contriller.dart';
+import 'package:explore_kepri/screens/home.dart';
 import 'package:explore_kepri/screens/login.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
-import 'package:get/get.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -15,12 +17,20 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   bool isHide = true;
-  final TextEditingController namaC = TextEditingController();
-  final TextEditingController emailC = TextEditingController();
-  final TextEditingController passwordC = TextEditingController();
- 
- final authC = Get.find<AuthController>();
- 
+  final auth = AuthContriller();
+
+  final nama = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    nama.dispose();
+    email.dispose();
+    password.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +126,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: namaC,
+                                  controller: nama,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -159,7 +169,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: emailC,
+                                  controller: email,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -204,7 +214,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: passwordC,
+                                  controller: password,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -249,10 +259,10 @@ class _RegisterViewState extends State<RegisterView> {
                                               color: darkColor, width: 2.0))),
                                 ),
                                  
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 30),
                                 GestureDetector(
                                   onTap: (){
-                                    authC.register(namaC.text, emailC.text, passwordC.text);
+                                   _signup();
                                   }, 
                                   child: Container(
                                     width: double.infinity,
@@ -322,5 +332,20 @@ class _RegisterViewState extends State<RegisterView> {
             ),
           ),
         ));
+  }
+  
+
+  goToHome(BuildContext context) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+
+  _signup() async {
+    final user =
+        await auth.createUserWithEmailAndPassword(email.text, password.text);
+    if (user != null) {
+      log("User Created Succesfully");
+      goToHome(context);
+    }
   }
 }

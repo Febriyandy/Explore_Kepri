@@ -1,4 +1,5 @@
 import 'package:explore_kepri/controllers/auth_contriller.dart';
+import 'package:explore_kepri/screens/onbording.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final authC = Get.find<AuthController>();
+  final auth = AuthContriller();
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -28,8 +29,9 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20), // Menambahkan jarak antara teks dan tombol
             GestureDetector(
-              onTap: () {
-                authC.logout();
+              onTap: () async{
+                await auth.signout();
+                goToLogin(context);
               },
               child: Container(
                 width: 200,
@@ -59,5 +61,9 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+  goToLogin(BuildContext context) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OnbordingView()),
+      );
 }
 

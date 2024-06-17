@@ -1,26 +1,33 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
+import 'dart:developer';
 
-class AuthController extends GetxController {
-  FirebaseAuth auth = FirebaseAuth.instance;
+class AuthContriller {
+  final auth = FirebaseAuth.instance;
+
+
+  Future<User?> createUserWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      final cred = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      return cred.user;
+    } catch (e) {
+      log("Something went wrong");
+    }
+    return null;
+  }
 
   // Stream untuk memantau status autentikasi pengguna
-  Stream<User?> get streamAuthStatus => auth.authStateChanges();
-
-  // Fungsi untuk login
-  void login(String email, String password) async {
+  Future<User?> loginUserWithEmailAndPassword(
+      String email, String password) async {
     try {
-      await auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('Tidak ada pengguna yang ditemukan dengan email tersebut.');
-      } else if (e.code == 'wrong-password') {
-        print('Kata sandi yang diberikan salah.');
-      }
+      final cred = await auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return cred.user;
+    } catch (e) {
+      log("Something went wrong");
     }
+    return null;
   }
 
   void register(String nama, String email, String password) async {
@@ -54,7 +61,11 @@ class AuthController extends GetxController {
 
 
   // Fungsi untuk logout
-  void logout() async {
-    await auth.signOut();
+  Future<void> signout() async {
+    try {
+      await auth.signOut();
+    } catch (e) {
+      log("Something went wrong");
+    }
   }
 }

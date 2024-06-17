@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:explore_kepri/controllers/auth_contriller.dart';
+import 'package:explore_kepri/screens/home.dart';
 import 'package:explore_kepri/screens/register.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +18,17 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool isHide = true;
-  final TextEditingController emailC = TextEditingController(text: "febri@gmail.com");
-  final TextEditingController passwordC = TextEditingController(text: "Febri123");
+  final auth = AuthContriller();
 
-  final authC = Get.find<AuthController>();
+  final email = TextEditingController();
+  final password = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    email.dispose();
+    password.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: emailC,
+                                  controller: email,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -162,7 +172,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: passwordC,
+                                  controller: password,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -225,7 +235,7 @@ class _LoginViewState extends State<LoginView> {
                                 // Add space between text fields and button
                                 GestureDetector(
                                   onTap: () {
-                                    authC.login(emailC.text, passwordC.text);
+                                    _login();
                                   },
                                   child: Container(
                                     width: double.infinity,
@@ -348,5 +358,21 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ));
+        
+  }
+  
+  goToHome(BuildContext context) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+
+  _login() async {
+    final user =
+        await auth.loginUserWithEmailAndPassword(email.text, password.text);
+
+    if (user != null) {
+      log("User Logged In");
+      goToHome(context);
+    }
   }
 }

@@ -1,10 +1,6 @@
-import 'package:explore_kepri/controllers/auth_contriller.dart';
 import 'package:explore_kepri/firebase_options.dart';
-import 'package:explore_kepri/screens/home.dart';
-import 'package:explore_kepri/utils/loading.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:explore_kepri/screens/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:explore_kepri/screens/onbording.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:get/get.dart';
@@ -21,16 +17,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final authC = Get.put(AuthController(), permanent: true);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: authC.streamAuthStatus,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          print(snapshot.data);
-
           return GetMaterialApp(
             title: 'Explore Kepri',
             debugShowCheckedModeBanner: false,
@@ -50,12 +40,9 @@ class MyApp extends StatelessWidget {
               ),
               duration: 3000, // Durasi splash screen (dalam milidetik)
               splashTransition: SplashTransition.fadeTransition, // Transisi animasi
-              nextScreen: snapshot.data != null ? HomePage() : OnbordingView(), // Layar selanjutnya setelah splash screen
+              nextScreen: const  Wrapper(), // Layar selanjutnya setelah splash screen
             ),
           );
         }
-        return LoadingView(); // Tampilkan widget LoadingView selama proses stream belum aktif
-      },
-    );
-  }
+        
 }
