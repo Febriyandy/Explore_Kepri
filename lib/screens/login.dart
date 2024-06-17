@@ -1,7 +1,10 @@
+import 'package:explore_kepri/controllers/auth_contriller.dart';
 import 'package:explore_kepri/screens/register.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:get/get.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -12,6 +15,10 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool isHide = true;
+  final TextEditingController emailC = TextEditingController(text: "febri@gmail.com");
+  final TextEditingController passwordC = TextEditingController(text: "Febri123");
+
+  final authC = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +117,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
+                                  controller: emailC,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -154,6 +162,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
+                                  controller: passwordC,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -215,7 +224,9 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 // Add space between text fields and button
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    authC.login(emailC.text, passwordC.text);
+                                  },
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(

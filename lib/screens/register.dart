@@ -1,7 +1,10 @@
+import 'package:explore_kepri/controllers/auth_contriller.dart';
 import 'package:explore_kepri/screens/login.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:get/get.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -12,10 +15,11 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   bool isHide = true;
-  final TextEditingController namaController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confPasswordController = TextEditingController();
+  final TextEditingController namaC = TextEditingController();
+  final TextEditingController emailC = TextEditingController();
+  final TextEditingController passwordC = TextEditingController();
+ 
+ final authC = Get.find<AuthController>();
  
   @override
   Widget build(BuildContext context) {
@@ -75,7 +79,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 Positioned(
-                  top: 230,
+                  top: 260,
                   left: 0,
                   right: 0,
                   child: Center(
@@ -85,7 +89,7 @@ class _RegisterViewState extends State<RegisterView> {
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
                           width: 350,
-                          height: 530,
+                          height: 450,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20.0),
@@ -112,7 +116,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: namaController,
+                                  controller: namaC,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -155,7 +159,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: emailController,
+                                  controller: emailC,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -200,7 +204,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: passwordController,
+                                  controller: passwordC,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -244,68 +248,12 @@ class _RegisterViewState extends State<RegisterView> {
                                           borderSide: BorderSide(
                                               color: darkColor, width: 2.0))),
                                 ),
-                                 Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                                  child: Text(
-                                    "Konfirmasi Password",
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: "Poppins",
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: darkColor,
-                                    ),
-                                  ),
-                                ),
-                                TextFormField(
-                                  controller: confPasswordController,
-                                  obscureText: isHide,
-                                  style: TextStyle(
-                                      color: darkColor,
-                                      fontSize: 14,
-                                      fontFamily: "Poppins"),
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isHide = !isHide;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          isHide
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: grayColor,
-                                          size: 18,
-                                        ),
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 12.5, horizontal: 14),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          borderSide: const BorderSide(
-                                              width: 0,
-                                              style: BorderStyle.none)),
-                                      hintText: "Konfirmasi Password",
-                                      hintStyle: TextStyle(
-                                        color: grayColor,
-                                        fontSize: 14,
-                                        fontFamily: "Poppins",
-                                      ),
-                                      fillColor: Colors.white.withOpacity(0.5),
-                                      filled: true,
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          borderSide: BorderSide(
-                                              color: darkColor, width: 2.0))),
-                                ),
+                                 
                                 const SizedBox(height: 20),
                                 GestureDetector(
-                                  onTap: (){}, 
+                                  onTap: (){
+                                    authC.register(namaC.text, emailC.text, passwordC.text);
+                                  }, 
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(

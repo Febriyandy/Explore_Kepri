@@ -29,33 +29,33 @@ class MyApp extends StatelessWidget {
       stream: authC.streamAuthStatus,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-        print(snapshot.data);
+          print(snapshot.data);
 
-          return MaterialApp(
-          title: 'Explore Kepri',
-          debugShowCheckedModeBanner: false,
-          home: AnimatedSplashScreen(
-            // Tampilan splash screen dengan animasi
-            splash: LayoutBuilder(
-              builder: (context, constraints) {
-                return Center(
-                  child: Image.asset(
-                    'assets/images/Logo.png',
-                    width: constraints.maxWidth * 0.6,
-                    height: constraints.maxHeight * 0.6,
-                    fit: BoxFit.contain,
-                  ),
-                );
-              },
+          return GetMaterialApp(
+            title: 'Explore Kepri',
+            debugShowCheckedModeBanner: false,
+            home: AnimatedSplashScreen(
+              // Tampilan splash screen dengan animasi
+              splash: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Center(
+                    child: Image.asset(
+                      'assets/images/Logo.png',
+                      width: constraints.maxWidth * 0.6,
+                      height: constraints.maxHeight * 0.6,
+                      fit: BoxFit.contain,
+                    ),
+                  );
+                },
+              ),
+              duration: 3000, // Durasi splash screen (dalam milidetik)
+              splashTransition: SplashTransition.fadeTransition, // Transisi animasi
+              nextScreen: snapshot.data != null ? HomePage() : OnbordingView(), // Layar selanjutnya setelah splash screen
             ),
-            duration: 3000, // Durasi splash screen (dalam milidetik)
-            splashTransition: SplashTransition.fadeTransition, // Transisi animasi
-            nextScreen: snapshot.data != null ? const HomePage() : const OnbordingView(), // Layar selanjutnya setelah splash screen
-          ),
-        );
+          );
         }
-      return const LoadingView();
-      }
+        return LoadingView(); // Tampilkan widget LoadingView selama proses stream belum aktif
+      },
     );
   }
 }
