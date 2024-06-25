@@ -1,11 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'dart:developer';
 
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthContriller {
   final auth = FirebaseAuth.instance;
+  final Rx<User?> firebaseUser = Rx<User?>(null);
 
+  User? get user => firebaseUser.value;
+
+
+//fungsi untuk login user dengan google
   Future<UserCredential?> loginWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
@@ -21,6 +27,7 @@ class AuthContriller {
     return null;
   }
 
+//fungsi untuk registrasi dengan firebase autentikasi
   Future<User?> createUserWithEmailAndPassword(
       String email, String password) async {
     try {
@@ -33,7 +40,7 @@ class AuthContriller {
     return null;
   }
 
-  // Stream untuk memantau status autentikasi pengguna
+  // fungsi untuk login dengan email dan password
   Future<User?> loginUserWithEmailAndPassword(
       String email, String password) async {
     try {
@@ -46,36 +53,6 @@ class AuthContriller {
     return null;
   }
 
-  void register(String nama, String email, String password) async {
-    try {
-      UserCredential userCredential =
-          await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      User? user = userCredential.user;
-      if (user != null) {
-        await user.updateDisplayName(nama);
-        print('User registered successfully: ${user.uid}');
-      } else {
-        print('Gagal mendapatkan user setelah registrasi.');
-      }
-
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('Password yang diberikan terlalu lemah.');
-      } else if (e.code == 'email-already-in-use') {
-        print('Akun sudah ada untuk email tersebut.');
-      } else {
-        print('Terjadi kesalahan saat mencoba untuk mendaftar: ${e.message}');
-      }
-    } catch (e) {
-      print('Terjadi kesalahan yang tidak diketahui: $e');
-    }
-  }
-
-
   // Fungsi untuk logout
   Future<void> signout() async {
     try {
@@ -85,3 +62,5 @@ class AuthContriller {
     }
   }
 }
+
+  

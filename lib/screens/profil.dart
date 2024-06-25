@@ -1,14 +1,14 @@
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ProfilPage extends StatefulWidget {
+  const ProfilPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ProfilPage> createState() => _ProfilPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ProfilPageState extends State<ProfilPage> {
 
   @override
   Widget build(BuildContext context) {

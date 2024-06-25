@@ -1,4 +1,4 @@
-import 'package:explore_kepri/screens/home.dart';
+import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/screens/onbording.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class Wrapper extends StatelessWidget {
           if(snapshot.data == null) {
             return const OnbordingView();
           }else{
-            return const HomePage();
+            return const LandingPage();
           }
         }
       }

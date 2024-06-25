@@ -1,14 +1,14 @@
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AddFotoPage extends StatefulWidget {
+  const AddFotoPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AddFotoPage> createState() => _AddFotoPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AddFotoPageState extends State<AddFotoPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
               const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Home Page')
+                  Text('Tambah Foto Page')
                 ],
               )
             ],

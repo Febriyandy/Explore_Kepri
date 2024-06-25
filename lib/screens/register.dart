@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:explore_kepri/controllers/auth_contriller.dart';
-import 'package:explore_kepri/screens/home.dart';
+import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/screens/login.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -337,7 +337,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   goToHome(BuildContext context) => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const LandingPage()),
       );
 
   _signup() async {
