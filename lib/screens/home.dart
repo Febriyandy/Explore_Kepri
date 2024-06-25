@@ -1,49 +1,185 @@
+import 'dart:ui';
+
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  User? user =
+      FirebaseAuth.instance.currentUser; // Mendapatkan pengguna saat ini
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/latarbelakang.png'),
-              fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/latarbelakang.png'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          height: MediaQuery.of(context).size.height, // Menggunakan tinggi layar penuh
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 40, 20, 0),
-                  child: Image.asset(
-                    'assets/images/Logo.png',
-                    width: 150,
-                    height: 100,
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).padding.top,
+                ), // Padding untuk status bar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 50, 20, 0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Image.asset(
+                      'assets/images/Logo.png',
+                      width: 150,
+                    ),
                   ),
                 ),
-              ),
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Home Page')
-                ],
-              )
-            ],
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: darkColor,
+                            width: 3.0,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: user?.photoURL != null
+                              ? Image.network(
+                                  user!.photoURL!,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/images/profil.png',
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FutureBuilder<User?>(
+                            future:
+                                FirebaseAuth.instance.authStateChanges().first,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<User?> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Text(
+                                  'Loading...',
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
+                                );
+                              } else {
+                                user = snapshot.data;
+                                String displayName =
+                                    user?.displayName ?? 'Guest';
+                                return Text(
+                                  'Hi, $displayName',
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          // Tambahkan konten lainnya di sini
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.0),
+                      color: Colors.white.withOpacity(0.2),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(1),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          child: TextField(
+                            style: TextStyle(
+                              color: darkColor,
+                              fontSize: 14,
+                              fontFamily: "Poppins",
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Yuk cari destinasi tujuanmu',
+                              hintStyle: TextStyle(
+                                color: grayColor,
+                                fontSize: 14,
+                                fontFamily: "Poppins",
+                              ),
+                              suffixIcon: Icon(Icons.search, color: darkColor),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 20.0,
+                              ),
+                              filled: true,
+                              fillColor: Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                
+                
+                SizedBox(
+                  height: 100,
+                ), // Padding bawah agar konten tidak tertutup oleh bottom navigation
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

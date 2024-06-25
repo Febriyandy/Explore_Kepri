@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:explore_kepri/utils/theme.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import './home.dart';
 import './transaksi.dart';
 import './addFoto.dart';
@@ -23,59 +25,105 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _container[_bottomNavCurrentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          setState(() {
-            _bottomNavCurrentIndex = index;
-          });
-        },
-        currentIndex: _bottomNavCurrentIndex,
-        items: const [
-          BottomNavigationBarItem(
-            activeIcon: Icon(
-              Icons.home,
-              color: Colors.red,
-            ),
-            icon: Icon(
-              Icons.home,
-              color: Colors.grey,
-            ),
-            label: 'Beranda',
+      resizeToAvoidBottomInset: false, // Menghindari pergeseran saat keyboard muncul
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: _bottomNavCurrentIndex,
+            children: _container,
           ),
-          BottomNavigationBarItem(
-            activeIcon: Icon(
-              Icons.attach_money,
-              color: Colors.red,
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: BottomNavigationBar(
+                backgroundColor: Colors.white,
+                type: BottomNavigationBarType.fixed,
+                onTap: (index) {
+                  setState(() {
+                    _bottomNavCurrentIndex = index;
+                  });
+                },
+                currentIndex: _bottomNavCurrentIndex,
+                selectedItemColor: blueColor,
+                unselectedItemColor: Colors.grey,
+                selectedLabelStyle: const TextStyle(fontSize: 12.0 , fontFamily: "Poppins"), 
+                unselectedLabelStyle: const TextStyle(fontSize: 12.0 , fontFamily: "Poppins"),
+                items: [
+                  BottomNavigationBarItem(
+                    activeIcon: SvgPicture.asset(
+                      'assets/icons/home.svg',
+                      color: blueColor,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    icon: SvgPicture.asset(
+                      'assets/icons/home.svg',
+                      color: Colors.grey,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    label: 'Beranda',
+                  ),
+                  BottomNavigationBarItem(
+                    activeIcon: SvgPicture.asset(
+                      'assets/icons/transaksi.svg',
+                      color: blueColor,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    icon: SvgPicture.asset(
+                      'assets/icons/transaksi.svg',
+                      color: Colors.grey,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    label: 'Transaksi',
+                  ),
+                  BottomNavigationBarItem(
+                    activeIcon: SvgPicture.asset(
+                      'assets/icons/foto.svg',
+                      color: blueColor,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    icon: SvgPicture.asset(
+                      'assets/icons/foto.svg',
+                      color: Colors.grey,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    label: 'Tambah Foto',
+                  ),
+                  BottomNavigationBarItem(
+                    activeIcon: SvgPicture.asset(
+                      'assets/icons/profil.svg',
+                      color: blueColor,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    icon: SvgPicture.asset(
+                      'assets/icons/profil.svg',
+                      color: Colors.grey,
+                      width: 25.0,
+                      height: 25.0,
+                    ),
+                    label: 'Profil',
+                  ),
+                ],
+              ),
             ),
-            icon: Icon(
-              Icons.attach_money,
-              color: Colors.grey,
-            ),
-            label: 'Transaksi',
-          ),
-          BottomNavigationBarItem(
-            activeIcon: Icon(
-              Icons.add_a_photo,
-              color: Colors.red,
-            ),
-            icon: Icon(
-              Icons.add_a_photo,
-              color: Colors.grey,
-            ),
-            label: 'Tambah Foto',
-          ),
-          BottomNavigationBarItem(
-            activeIcon: Icon(
-              Icons.person,
-              color: Colors.red,
-            ),
-            icon: Icon(
-              Icons.person,
-              color: Colors.grey,
-            ),
-            label: 'Profil',
           ),
         ],
       ),

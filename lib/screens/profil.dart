@@ -38,7 +38,7 @@ class _ProfilPageState extends State<ProfilPage> {
               const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Home Page')
+                  Text('Profil Page')
                 ],
               )
             ],

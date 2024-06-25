@@ -345,6 +345,8 @@ class _RegisterViewState extends State<RegisterView> {
         await auth.createUserWithEmailAndPassword(email.text, password.text);
     if (user != null) {
       log("User Created Succesfully");
+      await user!.updateProfile(displayName: nama.text);
+      log("Display Name Updated Successfully");
       goToHome(context);
     }
   }
