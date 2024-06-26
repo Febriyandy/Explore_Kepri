@@ -1,6 +1,10 @@
 import 'dart:ui';
 
+import 'package:explore_kepri/screens/destinasi.dart';
+import 'package:explore_kepri/screens/galeri.dart';
+import 'package:explore_kepri/screens/paket.dart';
 import 'package:explore_kepri/utils/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -122,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30.0),
@@ -171,9 +175,144 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                
-                
-                SizedBox(
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const DestinasiPage()));
+                        },
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(1),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/images/destinasi.png',
+                                  height: 53,
+                                ), // Tambahkan jarak antara gambar dan teks
+                                 Text(
+                                  "Destinasi Wisata",
+                            textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 12,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20), 
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const PaketPage()));
+                        },
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(1),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                  child: Image.asset(
+                                    'assets/images/paket.png',
+                                    height: 53,
+                                  ),
+                                ), // Tambahkan jarak antara gambar dan teks
+                                 Text(
+                                  "Paket Wisata",
+                            textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 12,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20), 
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              const GaleriPage()));
+                        },
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(1),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                  child: Image.asset(
+                                    'assets/images/galeri.png',
+                                    height: 53,
+                                  ),
+                                ), // Tambahkan jarak antara gambar dan teks
+                                 Text(
+                                  "Galeri Wisata",
+                            textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 12,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
+                const SizedBox(
                   height: 100,
                 ), // Padding bawah agar konten tidak tertutup oleh bottom navigation
               ],
