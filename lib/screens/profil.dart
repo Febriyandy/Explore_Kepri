@@ -1,3 +1,5 @@
+import 'package:explore_kepri/controllers/auth_contriller.dart';
+import 'package:explore_kepri/screens/onbording.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,7 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
+  final auth = AuthContriller();
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +38,61 @@ class _ProfilPageState extends State<ProfilPage> {
                   ),
                 ),
               ),
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Profil Page')
-                ],
-              )
+              Positioned.fill(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Profil Page',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () async {
+                        await auth.signout();
+                        goToLogin(context);
+                      },
+                      child: Container(
+                        width: 200,
+                        padding: const EdgeInsets.symmetric(vertical: 13.5),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [darkColor, primary],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          "Keluar",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void goToLogin(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const OnbordingView()),
     );
   }
 }

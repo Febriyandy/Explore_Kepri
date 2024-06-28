@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:explore_kepri/screens/destinasi.dart';
+import 'package:explore_kepri/screens/detailDestinasi.dart';
 import 'package:explore_kepri/screens/galeri.dart';
 import 'package:explore_kepri/screens/paket.dart';
 import 'package:explore_kepri/utils/theme.dart';
@@ -226,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              const PaketPage()));
+                              const DetailDestinasiPage()));
                         },
                         child: Container(
                           height: 100,
