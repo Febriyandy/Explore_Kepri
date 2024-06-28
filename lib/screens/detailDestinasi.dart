@@ -1,18 +1,41 @@
 import 'dart:ui';
-
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:explore_kepri/screens/destinasi.dart';
 import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class DetailDestinasiPage extends StatefulWidget {
-  const DetailDestinasiPage({super.key});
+  final String id;
+  const DetailDestinasiPage({super.key, required this.id});
 
   @override
   State<DetailDestinasiPage> createState() => _DetailDestinasiPageState();
 }
 
 class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
+  final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
+  Map<dynamic, dynamic>? destinasiData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDestinasiData();
+  }
+
+  Future<void> _fetchDestinasiData() async {
+    DatabaseEvent event = await _databaseReference.child(widget.id).once();
+    var data = event.snapshot.value as Map<dynamic, dynamic>?;
+    if (data != null) {
+      setState(() {
+        destinasiData = data;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,10 +45,11 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
-                image: DecorationImage(
-              image: AssetImage('assets/images/latarbelakang.png'),
-              fit: BoxFit.cover,
-            )),
+              image: DecorationImage(
+                image: AssetImage('assets/images/latarbelakang.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           Column(
             children: [
@@ -46,7 +70,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          const LandingPage()));
+                                          const DestinasiPage()));
                             },
                             child: SvgPicture.asset(
                               'assets/icons/back.svg',
@@ -73,156 +97,174 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                   ],
                 ),
               ),
-              Expanded(
-                  child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 25.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15.0),
-                        child: Image.asset(
-                          'assets/images/cover1.jpg',
-                          width: 500,
-                          height: 220,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          "Nama Destinasi",
-                          style: TextStyle(
-                            color: darkColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/lokasi.svg',
-                            color: blueColor,
-                            width: 15.0,
-                            height: 15.0,
-                          ),
-                          Text(
-                            "Kabupaten",
-                            style: TextStyle(
-                              color: darkColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: "Poppins",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25.0, vertical: 20.0),
-                      child: Container(
-                        width: 400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.0),
-                          color: Colors.white.withOpacity(0.2),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(1),
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(30.0),
+              destinasiData == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 20.0, horizontal: 25.0),
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  height: 220.0,
+                                  enlargeCenterPage: true,
+                                  autoPlay: true,
+                                  aspectRatio: 16 / 9,
+                                  autoPlayCurve: Curves.fastOutSlowIn,
+                                  enableInfiniteScroll: true,
+                                  autoPlayAnimationDuration:
+                                      const Duration(milliseconds: 800),
+                                  viewportFraction: 0.8,
+                                ),
+                                items: (destinasiData!['images'] as List<dynamic>)
+                                    .map((item) => ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                          child: Image.network(
+                                            item,
+                                            fit: BoxFit.cover,
+                                            width: 1000,
+                                          ),
+                                        ))
+                                    .toList(),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25.0),
+                              child: Align(
+                                alignment: Alignment.topLeft,
                                 child: Text(
-                                  "Deskripsi",
+                                  destinasiData!['nama_tempat'],
                                   style: TextStyle(
-                                color: darkColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                                fontFamily: "Poppins",
-                                                            ),
+                                    color: darkColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          "Alamat",
-                          style: TextStyle(
-                            color: darkColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25.0, vertical: 20.0),
-                      child: Container(
-                        width: 400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.0),
-                          color: Colors.white.withOpacity(0.2),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(1),
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(30.0),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/lokasi.svg',
+                                    color: blueColor,
+                                    width: 15.0,
+                                    height: 15.0,
+                                  ),
+                                  Text(
+                                    destinasiData!['kabupaten'],
+                                    style: TextStyle(
+                                      color: darkColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: "Poppins",
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 25.0, vertical: 20.0),
+                              child: Container(
+                                width: 400,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Colors.white.withOpacity(0.2),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: Text(
+                                          destinasiData!['deskripsi'],
+                                          style: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: "Poppins",
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25.0),
+                              child: Align(
+                                alignment: Alignment.topLeft,
                                 child: Text(
                                   "Alamat",
                                   style: TextStyle(
-                                color: darkColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                                fontFamily: "Poppins",
-                                                            ),
+                                    color: darkColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 25.0, vertical: 20.0),
+                              child: Container(
+                                width: 400,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Colors.white.withOpacity(0.2),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: Text(
+                                          destinasiData!['alamat'],
+                                          style: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: "Poppins",
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ))
             ],
-          )
+          ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:explore_kepri/screens/detailDestinasi.dart';
 import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,9 @@ class _DestinasiPageState extends State<DestinasiPage> {
       if (data != null) {
         List<Map<dynamic, dynamic>> tempDestinasiList = [];
         data.forEach((key, value) {
-          tempDestinasiList.add(value as Map<dynamic, dynamic>);
+          var destinasi = value as Map<dynamic, dynamic>;
+          destinasi['id'] = key;
+          tempDestinasiList.add(destinasi);
         });
         setState(() {
           destinasiList = tempDestinasiList;
@@ -202,76 +205,88 @@ class _DestinasiPageState extends State<DestinasiPage> {
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
                             var destinasi = destinasiList[index];
-                            return Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    child: AspectRatio(
-                                      aspectRatio: 0.8,
-                                      child: Image.network(
-                                        destinasi['images'][0],
-                                        fit: BoxFit.cover,
-                                      ),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailDestinasiPage(
+                                      id: destinasi['id'],
                                     ),
                                   ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(15.0),
-                                      bottomRight: Radius.circular(15.0),
+                                );
+                              },
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                                      child: Container(
-                                        height: 55,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.transparent,
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(15.0),
-                                            bottomRight: Radius.circular(15.0),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10.0,
-                                            vertical: 10.0,
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                destinasi['nama_tempat'],
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(
-                                                destinasi['kabupaten'],
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      child: AspectRatio(
+                                        aspectRatio: 0.8,
+                                        child: Image.network(
+                                          destinasi['images'][0],
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(15.0),
+                                        bottomRight: Radius.circular(15.0),
+                                      ),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                        child: Container(
+                                          height: 55,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.transparent,
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(15.0),
+                                              bottomRight: Radius.circular(15.0),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0,
+                                              vertical: 10.0,
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  destinasi['nama_tempat'],
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  destinasi['kabupaten'],
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                           childCount: destinasiList.length,

@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              const DetailDestinasiPage()));
+                              const PaketPage()));
                         },
                         child: Container(
                           height: 100,
