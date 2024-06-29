@@ -11,7 +11,7 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-  final auth = AuthContriller();
+  final auth = AuthController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () async {
-                        await auth.signout();
+                        await auth.signOut();
                         goToLogin(context);
                       },
                       child: Container(

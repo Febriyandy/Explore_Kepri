@@ -4,6 +4,8 @@ import 'package:explore_kepri/controllers/auth_contriller.dart';
 import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/screens/login.dart';
 import 'package:explore_kepri/utils/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -17,7 +19,7 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   bool isHide = true;
-  final auth = AuthContriller();
+  final auth = AuthController();
 
   final nama = TextEditingController();
   final email = TextEditingController();
@@ -335,19 +337,48 @@ class _RegisterViewState extends State<RegisterView> {
   }
   
 
-  goToHome(BuildContext context) => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LandingPage()),
-      );
+ void goToHome(BuildContext context) => Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LandingPage()),
+    );
 
-  _signup() async {
+Future<void> _signup() async {
+  try {
     final user =
         await auth.createUserWithEmailAndPassword(email.text, password.text);
     if (user != null) {
-      log("User Created Succesfully");
-      await user!.updateProfile(displayName: nama.text);
+      log("User Created Successfully");
+      await user.updateProfile(displayName: nama.text);
       log("Display Name Updated Successfully");
+      // Panggil _saveUserData setelah user berhasil dibuat dan profil diperbarui
+      await _saveUserData(user);
       goToHome(context);
     }
+  } catch (e) {
+    log("Error: $e");
   }
+}
+
+Future<void> _saveUserData(User user) async {
+  try {
+    DatabaseReference userRef = FirebaseDatabase.instance
+        .ref()
+        .child('explore-kepri')
+        .child('users');
+
+    // Reload user to ensure updated information
+    await user.reload();
+    user = FirebaseAuth.instance.currentUser!;
+
+    await userRef.child(user.uid).set({
+      'uid': user.uid,
+      'email': user.email,
+      'displayName': user.displayName ?? '',
+      'photoURL': user.photoURL ?? '',
+    });
+  } catch (e) {
+    print('Error saving user data: $e');
+  }
+}
+
 }

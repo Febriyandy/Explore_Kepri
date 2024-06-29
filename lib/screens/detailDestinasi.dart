@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:explore_kepri/screens/destinasi.dart';
@@ -21,6 +22,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
   final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
   Map<dynamic, dynamic>? destinasiData;
+  List<dynamic>? ulasanData;
   TextEditingController _reviewController = TextEditingController();
   double _ratingValue = 0.0;
   String? _userId; // Untuk menyimpan id user yang sedang login
@@ -29,6 +31,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
   void initState() {
     super.initState();
     _fetchDestinasiData();
+    _fetchUlasanData(); // Panggil method untuk mengambil data ulasan
     _getCurrentUser(); // Panggil method untuk mendapatkan id user yang sedang login
   }
 
@@ -47,6 +50,21 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     if (data != null) {
       setState(() {
         destinasiData = data;
+      });
+    }
+  }
+
+  Future<void> _fetchUlasanData() async {
+    DatabaseEvent event =
+        await _databaseReference.child('${widget.id}/ulasan').once();
+    var data = event.snapshot.value;
+
+    if (data != null && data is Map) {
+      // Convert Map to List<dynamic>
+      List<dynamic> dataList = data.values.toList();
+
+      setState(() {
+        ulasanData = dataList;
       });
     }
   }
@@ -199,41 +217,42 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                       },
                       child: Text(
                         "Batal",
-                      style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                              fontFamily: "Poppins",
-                            ),),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontFamily: "Poppins",
+                        ),
+                      ),
                     ),
                     Container(
-                          width: 120,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [darkColor, primary],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: GestureDetector(
-                               onTap: () {
-                        _submitReview();
-                        Navigator.of(context).pop();
-                      },
-                              child: const Text(
-                                "Kirim",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
-                              ),
+                      width: 120,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [darkColor, primary],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            _submitReview();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            "Kirim",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              color: Colors.white,
                             ),
                           ),
                         ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -244,9 +263,12 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     );
   }
 
-  void _submitReview() {
-    // Pastikan ada id user yang sedang login
-    if (_userId != null) {
+ void _submitReview() {
+  // Pastikan ada id user yang sedang login
+  if (_userId != null) {
+    // Ambil informasi user yang sedang login
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
       // Simpan ulasan ke Firebase Realtime Database
       DatabaseReference ulasanRef =
           _databaseReference.child('${widget.id}/ulasan').push();
@@ -254,21 +276,31 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
         'nilai_bintang': _ratingValue,
         'deskripsi_ulasan': _reviewController.text,
         'id_user': _userId, // Gunakan id user yang sedang login
+        'displayName': user.displayName ?? 'Nama Pengguna',
+        'photoURL': user.photoURL ?? 'https://example.com/avatar.jpg',
       }).then((_) {
         // Berhasil menyimpan
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Ulasan berhasil dikirim')));
+        // Refresh data ulasan setelah mengirim ulasan baru
+        _fetchUlasanData();
       }).catchError((error) {
         // Error ketika menyimpan
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Gagal mengirim ulasan: $error')));
       });
     } else {
-      // Handle jika id user tidak tersedia (seharusnya tidak terjadi)
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Gagal mengirim ulasan: ID User tidak tersedia')));
+      // Handle jika user tidak ditemukan (seharusnya tidak terjadi)
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal mengirim ulasan: User tidak ditemukan')));
     }
+  } else {
+    // Handle jika id user tidak tersedia (seharusnya tidak terjadi)
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Gagal mengirim ulasan: ID User tidak tersedia')));
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -579,7 +611,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                               children: [
                                 Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                                      const EdgeInsets.fromLTRB(25, 20, 25, 20),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -599,7 +631,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                   padding: const EdgeInsets.only(right: 25.0),
                                   child: Container(
                                     width: 130,
-                                    height: 40,
+                                    height: 35,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [darkColor, primary],
@@ -611,7 +643,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                     child: Center(
                                       child: GestureDetector(
                                         onTap: () {
-                                          _showReviewDialog();
+                                          _showReviewDialog(); // Call _showReviewDialog() here
                                         },
                                         child: const Text(
                                           "Tulis Ulasan",
@@ -628,21 +660,29 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 ),
                               ],
                             ),
-                            Row(
-                              children: [
-                                Container(
-                                   width: 270,
-                                   height: 160,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      color: Colors.white.withOpacity(0.2),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(1),
+                            SizedBox(height: 5),
+                            ulasanData == null
+                                ? SizedBox(
+                                    height: 50,
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                                  child: SizedBox(
+                                      height:
+                                          200, // Sesuaikan dengan tinggi yang diinginkan
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: ulasanData!.length,
+                                        itemBuilder: (context, index) {
+                                          return _buildUlasanCard(
+                                              ulasanData![index]);
+                                        },
                                       ),
                                     ),
                                 ),
-                              ],
-                            )
                           ],
                         ),
                       ),
@@ -653,4 +693,107 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
       ),
     );
   }
+
+ Widget _buildUlasanCard(dynamic ulasan) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+    child: Container(
+      width: 300,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: Colors.white.withOpacity(0.2),
+        border: Border.all(
+          color: Colors.white.withOpacity(1),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: darkColor,
+                      width: 3.0,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: ulasan['photoURL'] != null
+                        ? Image.network(
+                            ulasan['photoURL'],
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/profil.png',
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            'assets/images/profil.png',
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ulasan['displayName'] ?? 'Nama Pengguna',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Poppins",
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: List.generate(
+                        5,
+                        (index) => Icon(
+                          Icons.star,
+                          color: index < ulasan['nilai_bintang']
+                              ? Colors.orange
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              ulasan['deskripsi_ulasan'],
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                fontFamily: "Poppins",
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 }

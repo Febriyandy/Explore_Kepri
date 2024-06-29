@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final auth = AuthContriller();
+  final auth = AuthController();
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20), // Menambahkan jarak antara teks dan tombol
             GestureDetector(
               onTap: () async{
-                await auth.signout();
+                await auth.signOut();
                 goToLogin(context);
               },
               child: Container(

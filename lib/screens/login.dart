@@ -18,7 +18,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool isHide = true;
-  final auth = AuthContriller();
+  final auth = AuthController();
 
   final email = TextEditingController();
   final password = TextEditingController();
