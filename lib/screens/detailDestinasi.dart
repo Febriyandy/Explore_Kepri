@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:explore_kepri/screens/destinasi.dart';
-import 'package:explore_kepri/screens/landing.dart';
+import 'package:explore_kepri/screens/maps.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:latlong2/latlong.dart';
 
 class DetailDestinasiPage extends StatefulWidget {
   final String id;
@@ -118,17 +120,18 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                       const Duration(milliseconds: 800),
                                   viewportFraction: 0.8,
                                 ),
-                                items: (destinasiData!['images'] as List<dynamic>)
-                                    .map((item) => ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                          child: Image.network(
-                                            item,
-                                            fit: BoxFit.cover,
-                                            width: 1000,
-                                          ),
-                                        ))
-                                    .toList(),
+                                items:
+                                    (destinasiData!['images'] as List<dynamic>)
+                                        .map((item) => ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                              child: Image.network(
+                                                item,
+                                                fit: BoxFit.cover,
+                                                width: 1000,
+                                              ),
+                                            ))
+                                        .toList(),
                               ),
                             ),
                             Padding(
@@ -147,7 +150,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 25.0),
                               child: Row(
                                 children: [
                                   SvgPicture.asset(
@@ -170,7 +174,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 25.0, vertical: 20.0),
+                                  horizontal: 25.0, vertical: 10.0),
                               child: Container(
                                 width: 400,
                                 decoration: BoxDecoration(
@@ -183,11 +187,13 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15.0),
                                   child: BackdropFilter(
-                                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 10, sigmaY: 10),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(30.0),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(15),
@@ -223,7 +229,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 25.0, vertical: 20.0),
+                                  horizontal: 25.0, vertical: 10.0),
                               child: Container(
                                 width: 400,
                                 decoration: BoxDecoration(
@@ -236,11 +242,13 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15.0),
                                   child: BackdropFilter(
-                                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 10, sigmaY: 10),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(30.0),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(15),
@@ -255,6 +263,75 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                         ),
                                       ),
                                     ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25.0),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "Lokasi",
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  color: Colors.white.withOpacity(0.2),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(1),
+                                  ),
+                                ),
+                                width: 400,
+                                height: 200,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: FlutterMap(
+                                    options: MapOptions(
+                                      center: LatLng(
+                                        double.parse(destinasiData!['letitude']),
+                                        double.parse(destinasiData!['longitude']),
+                                      ),
+                                      zoom: 11,
+                                      interactiveFlags: InteractiveFlag.all &
+                                          ~InteractiveFlag.doubleTapZoom,
+                                    ),
+                                    children: [
+                                      TileLayer(
+                                        urlTemplate:
+                                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                        userAgentPackageName:
+                                            'dev.fleaflet.flutter_map.example',
+                                      ),
+                                      MarkerLayer(
+                                        markers: [
+                                          Marker(
+                                           point: LatLng(
+                                              double.parse(destinasiData!['letitude']),
+                                              double.parse(destinasiData!['longitude']),
+                                            ),
+                                            width: 60,
+                                            height: 60,
+                                            alignment: Alignment.centerLeft,
+                                            child: const Icon(
+                                              Icons.location_pin,
+                                              size: 60,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:explore_kepri/screens/destinasi.dart';
 import 'package:explore_kepri/screens/detailDestinasi.dart';
 import 'package:explore_kepri/screens/galeri.dart';
+import 'package:explore_kepri/screens/maps.dart';
 import 'package:explore_kepri/screens/paket.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
