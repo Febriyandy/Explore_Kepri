@@ -25,16 +25,17 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
   List<dynamic>? ulasanData;
   TextEditingController _reviewController = TextEditingController();
   double _ratingValue = 0.0;
-  String? _userId; // Untuk menyimpan id user yang sedang login
+  String? _userId;
 
   @override
   void initState() {
     super.initState();
     _fetchDestinasiData();
-    _fetchUlasanData(); // Panggil method untuk mengambil data ulasan
-    _getCurrentUser(); // Panggil method untuk mendapatkan id user yang sedang login
+    _fetchUlasanData();
+    _getCurrentUser();
   }
 
+//Fungsi untuk mendapatkan Id user
   Future<void> _getCurrentUser() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -44,6 +45,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     }
   }
 
+  //Fungsi untuk mendapatkan data Destinasi Berdasarkan Id
   Future<void> _fetchDestinasiData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -54,21 +56,45 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     }
   }
 
+//Fungsi untuk menghitung rating Destinasi berdasarkan nilai Ulasan Pengguna
+  void _hitungRating() {
+    if (ulasanData != null && ulasanData!.isNotEmpty) {
+      double totalRating = 0.0;
+      for (var ulasan in ulasanData!) {
+        totalRating += ulasan['nilai_bintang'];
+      }
+      double averageRating = totalRating / ulasanData!.length;
+      DatabaseReference destinasiRef = FirebaseDatabase.instance
+          .ref()
+          .child('explore-kepri/destinasi/${widget.id}');
+      destinasiRef.update({'rating': averageRating}).then((_) {
+        print('Rating berhasil diupdate: $averageRating');
+        _fetchDestinasiData();
+      }).catchError((error) {
+        print('Gagal mengupdate rating: $error');
+      });
+    } else {
+      print('Tidak ada ulasan yang tersedia.');
+    }
+  }
+
+//Fungsi untuk mendapatkan data ulasan
   Future<void> _fetchUlasanData() async {
     DatabaseEvent event =
         await _databaseReference.child('${widget.id}/ulasan').once();
     var data = event.snapshot.value;
 
     if (data != null && data is Map) {
-      // Convert Map to List<dynamic>
       List<dynamic> dataList = data.values.toList();
 
       setState(() {
         ulasanData = dataList;
       });
+      _hitungRating();
     }
   }
 
+//Fungsi untuk menampilkan popup menambahkan ulasan
   void _showReviewDialog() {
     showDialog(
       context: context,
@@ -93,7 +119,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  content: Container(
+                  content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: MediaQuery.of(context).size.height * 0.3,
                     child: Column(
@@ -180,32 +206,24 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                               color: darkColor,
                             ),
                             border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color:
-                                      darkColor), // Ubah warna border outline
-                              borderRadius: BorderRadius.circular(
-                                  10), // Ubah radius border outline
+                              borderSide: BorderSide(color: darkColor),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color:
-                                      darkColor), // Ubah warna border saat fokus
-                              borderRadius: BorderRadius.circular(
-                                  10), // Ubah radius border saat fokus
+                              borderSide: BorderSide(color: darkColor),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: darkColor.withOpacity(
-                                      0.5)), // Ubah warna border saat tidak fokus
-                              borderRadius: BorderRadius.circular(
-                                  10), // Ubah radius border saat tidak fokus
+                              borderSide:
+                                  BorderSide(color: darkColor.withOpacity(0.5)),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           style: TextStyle(
-                            color: darkColor, // Ubah warna teks
-                            fontFamily: "Poppins", // Ubah jenis font teks
+                            color: darkColor,
+                            fontFamily: "Poppins",
                           ),
-                          maxLines: 6, // Ubah jumlah maksimal baris
+                          maxLines: 6,
                         ),
                       ],
                     ),
@@ -263,50 +281,43 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     );
   }
 
- void _submitReview() {
-  // Pastikan ada id user yang sedang login
-  if (_userId != null) {
-    // Ambil informasi user yang sedang login
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // Simpan ulasan ke Firebase Realtime Database
-      DatabaseReference ulasanRef =
-          _databaseReference.child('${widget.id}/ulasan').push();
-      ulasanRef.set({
-        'nilai_bintang': _ratingValue,
-        'deskripsi_ulasan': _reviewController.text,
-        'id_user': _userId, // Gunakan id user yang sedang login
-        'displayName': user.displayName ?? 'Nama Pengguna',
-        'photoURL': user.photoURL ?? 'https://example.com/avatar.jpg',
-      }).then((_) {
-        // Berhasil menyimpan
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ulasan berhasil dikirim')));
-        // Refresh data ulasan setelah mengirim ulasan baru
-        _fetchUlasanData();
-      }).catchError((error) {
-        // Error ketika menyimpan
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal mengirim ulasan: $error')));
-      });
+//Fungsi untuk menyimpan Ulasan
+  void _submitReview() {
+    if (_userId != null) {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DatabaseReference ulasanRef =
+            _databaseReference.child('${widget.id}/ulasan').push();
+        ulasanRef.set({
+          'nilai_bintang': _ratingValue,
+          'deskripsi_ulasan': _reviewController.text,
+          'id_user': _userId,
+          'displayName': user.displayName ?? 'Nama Pengguna',
+          'photoURL': user.photoURL ?? 'https://example.com/avatar.jpg',
+        }).then((_) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Ulasan berhasil dikirim')));
+          _fetchUlasanData();
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal mengirim ulasan: $error')));
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Gagal mengirim ulasan: User tidak ditemukan')));
+      }
     } else {
-      // Handle jika user tidak ditemukan (seharusnya tidak terjadi)
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal mengirim ulasan: User tidak ditemukan')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Gagal mengirim ulasan: ID User tidak tersedia')));
     }
-  } else {
-    // Handle jika id user tidak tersedia (seharusnya tidak terjadi)
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Gagal mengirim ulasan: ID User tidak tersedia')));
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+//Container backround utama
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -317,6 +328,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
               ),
             ),
           ),
+
+//Container tulisan Destinasi wisata dan icon Back
           Column(
             children: [
               Container(
@@ -340,6 +353,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                             },
                             child: SvgPicture.asset(
                               'assets/icons/back.svg',
+                              // ignore: deprecated_member_use
                               color: blueColor,
                               width: 30.0,
                               height: 30.0,
@@ -363,6 +377,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                   ],
                 ),
               ),
+
+//Container menampilkan foto destinasi dari database
               destinasiData == null
                   ? const Center(child: CircularProgressIndicator())
                   : Expanded(
@@ -398,44 +414,113 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                         .toList(),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 25.0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  destinasiData!['nama_tempat'],
-                                  style: TextStyle(
-                                    color: darkColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "Poppins",
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25.0),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/lokasi.svg',
-                                    color: blueColor,
-                                    width: 15.0,
-                                    height: 15.0,
-                                  ),
-                                  Text(
-                                    destinasiData!['kabupaten'],
-                                    style: TextStyle(
-                                      color: darkColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                      fontFamily: "Poppins",
+
+//Container menampilakan nama destinasi, kabupaten dan rating
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 25.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          destinasiData!['nama_tempat'],
+                                          style: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Poppins",
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/icons/lokasi.svg',
+                                              color: blueColor,
+                                              width: 15.0,
+                                              height: 15.0,
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              destinasiData!['kabupaten'],
+                                              style: TextStyle(
+                                                color: darkColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.normal,
+                                                fontFamily: "Poppins",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 25.0),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        destinasiData != null &&
+                                                destinasiData!['rating'] != null
+                                            ? destinasiData!['rating']
+                                                .toStringAsFixed(1)
+                                            : '-',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '(',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
+                                      Text(
+                                        ulasanData != null
+                                            ? ulasanData!.length.toString()
+                                            : '0',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
+                                      Text(
+                                        ')',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
+
+//Container menampilkan deskripsi dari database
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 25.0, vertical: 10.0),
@@ -476,6 +561,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 ),
                               ),
                             ),
+
+//Container menampilkan text alamat dan data alamat dari database
                             Padding(
                               padding: const EdgeInsets.only(left: 25.0),
                               child: Align(
@@ -531,6 +618,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 ),
                               ),
                             ),
+
+//Container menampilkan text lokasi
                             Padding(
                               padding: const EdgeInsets.only(left: 25.0),
                               child: Align(
@@ -546,6 +635,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 ),
                               ),
                             ),
+
+//Container menampilkan peta berdasarkan latitude dan longitude dari database
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 25.0),
@@ -563,13 +654,16 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                   borderRadius: BorderRadius.circular(15.0),
                                   child: FlutterMap(
                                     options: MapOptions(
+                                      // ignore: deprecated_member_use
                                       center: LatLng(
                                         double.parse(
                                             destinasiData!['letitude']),
                                         double.parse(
                                             destinasiData!['longitude']),
                                       ),
+                                      // ignore: deprecated_member_use
                                       zoom: 11,
+                                      // ignore: deprecated_member_use
                                       interactiveFlags: InteractiveFlag.all &
                                           ~InteractiveFlag.doubleTapZoom,
                                     ),
@@ -605,6 +699,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 ),
                               ),
                             ),
+
+//Container menampilkan text ulasan dan tombol tulis ulasan
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -660,17 +756,20 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 5),
+
+//Container menampilkan data ulasan yang terdapat di database
+                            const SizedBox(height: 5),
                             ulasanData == null
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 50,
                                     child: Center(
                                       child: CircularProgressIndicator(),
                                     ),
                                   )
                                 : Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                                  child: SizedBox(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25.0),
+                                    child: SizedBox(
                                       height:
                                           200, // Sesuaikan dengan tinggi yang diinginkan
                                       child: ListView.builder(
@@ -682,7 +781,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                                         },
                                       ),
                                     ),
-                                ),
+                                  ),
                           ],
                         ),
                       ),
@@ -694,106 +793,106 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     );
   }
 
- Widget _buildUlasanCard(dynamic ulasan) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-    child: Container(
-      width: 300,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        color: Colors.white.withOpacity(0.2),
-        border: Border.all(
-          color: Colors.white.withOpacity(1),
+//Fungsi untuk mendapatkan data ulasan
+  Widget _buildUlasanCard(dynamic ulasan) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+      child: Container(
+        width: 300,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.white.withOpacity(0.2),
+          border: Border.all(
+            color: Colors.white.withOpacity(1),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: darkColor,
-                      width: 3.0,
-                    ),
-                  ),
-                  child: ClipOval(
-                    child: ulasan['photoURL'] != null
-                        ? Image.network(
-                            ulasan['photoURL'],
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/profil.png',
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            'assets/images/profil.png',
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      ulasan['displayName'] ?? 'Nama Pengguna',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Poppins",
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: darkColor,
+                        width: 3.0,
                       ),
                     ),
-                    SizedBox(height: 5),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(
-                          Icons.star,
-                          color: index < ulasan['nilai_bintang']
-                              ? Colors.orange
-                              : Colors.grey,
+                    child: ClipOval(
+                      child: ulasan['photoURL'] != null
+                          ? Image.network(
+                              ulasan['photoURL'],
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/profil.png',
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              'assets/images/profil.png',
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ulasan['displayName'] ?? 'Nama Pengguna',
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              ulasan['deskripsi_ulasan'],
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                fontFamily: "Poppins",
+                      const SizedBox(height: 5),
+                      Row(
+                        children: List.generate(
+                          5,
+                          (index) => Icon(
+                            Icons.star,
+                            color: index < ulasan['nilai_bintang']
+                                ? Colors.orange
+                                : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Text(
+                ulasan['deskripsi_ulasan'],
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: "Poppins",
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
