@@ -18,6 +18,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
       FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
 
   List<Map<dynamic, dynamic>> destinasiList = [];
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -39,6 +40,14 @@ class _DestinasiPageState extends State<DestinasiPage> {
         print('Data from Firebase is null or empty');
       }
     });
+  }
+
+  List<Map<dynamic, dynamic>> get filteredDestinasiList {
+    return destinasiList.where((destinasi) {
+      final namaTempat = destinasi['nama_tempat'].toString().toLowerCase();
+      final searchLower = searchQuery.toLowerCase();
+      return namaTempat.contains(searchLower);
+    }).toList();
   }
 
   @override
@@ -121,6 +130,11 @@ class _DestinasiPageState extends State<DestinasiPage> {
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
                               child: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchQuery = value;
+                                  });
+                                },
                                 style: TextStyle(
                                   color: darkColor,
                                   fontSize: 14,
@@ -189,7 +203,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
                   ],
                 ),
               ),
-              // Bagian bawah yang bisa di-scroll
+                            // Bagian bawah yang bisa di-scroll
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -204,7 +218,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
-                            var destinasi = destinasiList[index];
+                            var destinasi = filteredDestinasiList[index];
                             return GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -289,7 +303,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
                               ),
                             );
                           },
-                          childCount: destinasiList.length,
+                          childCount: filteredDestinasiList.length,
                         ),
                       ),
                     ),
