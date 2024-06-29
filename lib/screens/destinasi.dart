@@ -147,6 +147,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: blueColor,
+                              fontFamily: "Poppins",
                             ),
                           ),
                         ),
