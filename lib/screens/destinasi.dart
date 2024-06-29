@@ -19,6 +19,16 @@ class _DestinasiPageState extends State<DestinasiPage> {
 
   List<Map<dynamic, dynamic>> destinasiList = [];
   String searchQuery = '';
+  List<String> kabupatenList = [
+    'Kota Tanjungpinang',
+    'Kabupaten Bintan',
+    'Kabupaten Lingga',
+    'Kabupaten Natuna',
+    'Kabupaten Karimun',
+    'Kabupaten Anambas',
+    'Kota Batam',
+  ];
+  List<String> selectedKabupaten = [];
 
   @override
   void initState() {
@@ -45,9 +55,140 @@ class _DestinasiPageState extends State<DestinasiPage> {
   List<Map<dynamic, dynamic>> get filteredDestinasiList {
     return destinasiList.where((destinasi) {
       final namaTempat = destinasi['nama_tempat'].toString().toLowerCase();
+      final kabupaten = destinasi['kabupaten'].toString();
       final searchLower = searchQuery.toLowerCase();
-      return namaTempat.contains(searchLower);
+      return namaTempat.contains(searchLower) &&
+          (selectedKabupaten.isEmpty || selectedKabupaten.contains(kabupaten));
     }).toList();
+  }
+
+  void _showFilterPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            color:
+                Colors.white.withOpacity(0.1), // Adding white blur background
+            child: AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        "Filter Berdasarkan Kab/Kota",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: "Poppins",
+                          color: darkColor,
+                        ),
+                      ),
+                    ),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 4.0,
+                      alignment: WrapAlignment.center,
+                      children: kabupatenList.map((kabupaten) {
+                        return StatefulBuilder(
+                          builder: (context, setState) {
+                            return ChoiceChip(
+                              label: Text(kabupaten),
+                              selected: selectedKabupaten.contains(kabupaten),
+                              onSelected: (bool selected) {
+                                setState(() {
+                                  if (selected) {
+                                    selectedKabupaten.add(kabupaten);
+                                  } else {
+                                    selectedKabupaten.remove(kabupaten);
+                                  }
+                                });
+                              },
+                              selectedColor: blueColor,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30.0), // Rounded border
+                                side: BorderSide(
+                                    color:
+                                        darkColor), // Ganti darkColor dengan warna yang Anda inginkan
+                              ),
+                              labelStyle: TextStyle(
+                                color: selectedKabupaten.contains(kabupaten)
+                                    ? Colors.white
+                                    : darkColor,
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedKabupaten.clear();
+                            });
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            "Reset",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: blueColor,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 130,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [darkColor, primary],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {});
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                "Terapkan",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -67,7 +208,6 @@ class _DestinasiPageState extends State<DestinasiPage> {
           ),
           Column(
             children: [
-              // Bagian atas yang tidak di-scroll
               Container(
                 color: Colors.transparent,
                 child: Column(
@@ -75,7 +215,6 @@ class _DestinasiPageState extends State<DestinasiPage> {
                     SizedBox(
                       height: MediaQuery.of(context).padding.top,
                     ),
-                    // Header with Back button and Logo
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,7 +248,6 @@ class _DestinasiPageState extends State<DestinasiPage> {
                         ),
                       ],
                     ),
-                    // Search Bar
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       child: Container(
@@ -147,7 +285,8 @@ class _DestinasiPageState extends State<DestinasiPage> {
                                     fontSize: 14,
                                     fontFamily: "Poppins",
                                   ),
-                                  suffixIcon: Icon(Icons.search, color: darkColor),
+                                  suffixIcon:
+                                      Icon(Icons.search, color: darkColor),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30.0),
                                     borderSide: BorderSide.none,
@@ -189,7 +328,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: _showFilterPopup,
                             child: SvgPicture.asset(
                               'assets/icons/filter.svg',
                               color: blueColor,
@@ -203,14 +342,15 @@ class _DestinasiPageState extends State<DestinasiPage> {
                   ],
                 ),
               ),
-                            // Bagian bawah yang bisa di-scroll
               Expanded(
                 child: CustomScrollView(
                   slivers: [
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 15.0),
                       sliver: SliverGrid(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.8,
                           mainAxisSpacing: 20.0,
@@ -258,14 +398,16 @@ class _DestinasiPageState extends State<DestinasiPage> {
                                         bottomRight: Radius.circular(15.0),
                                       ),
                                       child: BackdropFilter(
-                                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 2, sigmaY: 2),
                                         child: Container(
                                           height: 55,
                                           decoration: const BoxDecoration(
                                             color: Colors.transparent,
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(15.0),
-                                              bottomRight: Radius.circular(15.0),
+                                              bottomRight:
+                                                  Radius.circular(15.0),
                                             ),
                                           ),
                                           child: Padding(
@@ -274,8 +416,10 @@ class _DestinasiPageState extends State<DestinasiPage> {
                                               vertical: 10.0,
                                             ),
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   destinasi['nama_tempat'],
