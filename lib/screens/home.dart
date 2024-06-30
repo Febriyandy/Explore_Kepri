@@ -1,9 +1,8 @@
 import 'dart:ui';
 
+import 'package:explore_kepri/screens/addFoto.dart';
 import 'package:explore_kepri/screens/destinasi.dart';
-import 'package:explore_kepri/screens/detailDestinasi.dart';
 import 'package:explore_kepri/screens/galeri.dart';
-import 'package:explore_kepri/screens/maps.dart';
 import 'package:explore_kepri/screens/paket.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,13 +18,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   User? user =
-      FirebaseAuth.instance.currentUser; // Mendapatkan pengguna saat ini
+      FirebaseAuth.instance.currentUser; // Mendapatkan pengguna yang sedang login
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+
+//Container Backround utama
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -41,7 +42,9 @@ class _HomePageState extends State<HomePage> {
               children: [
                 SizedBox(
                   height: MediaQuery.of(context).padding.top,
-                ), // Padding untuk status bar
+                ), 
+
+//Bagian Logo
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 50, 20, 0),
                   child: Align(
@@ -52,6 +55,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+
+//Bagian Profil dan nama pengguna
                 Row(
                   children: [
                     Padding(
@@ -121,12 +126,13 @@ class _HomePageState extends State<HomePage> {
                               }
                             },
                           ),
-                          // Tambahkan konten lainnya di sini
                         ],
                       ),
                     ),
                   ],
                 ),
+
+//Kotak Pencarian
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Container(
@@ -177,11 +183,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+
+//Menu Utama
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+
+//Menu Destinasi
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).pushReplacement(
@@ -206,8 +216,8 @@ class _HomePageState extends State<HomePage> {
                                 Image.asset(
                                   'assets/images/destinasi.png',
                                   height: 53,
-                                ), // Tambahkan jarak antara gambar dan teks
-                                 Text(
+                                ), 
+                                Text(
                                   "Destinasi Wisata",
                             textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -223,12 +233,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(width: 20), 
+
+//Menu Paket Wisata
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              const PaketPage()));
+                              const AddFotoPage()));
                         },
                         child: Container(
                           height: 100,
@@ -267,6 +279,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(width: 20), 
+
+//Menu Galeri Wisata
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).pushReplacement(
