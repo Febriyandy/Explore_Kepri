@@ -136,7 +136,7 @@ class _AddFotoPageState extends State<AddFotoPage> {
                   const SizedBox(height: 100),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15.0),
                       child: BackdropFilter(

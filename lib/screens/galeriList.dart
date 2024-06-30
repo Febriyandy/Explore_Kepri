@@ -1,27 +1,25 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:explore_kepri/screens/galeriList.dart';
-import 'package:explore_kepri/screens/galeri_detail.dart';
+import 'package:explore_kepri/screens/galeri.dart';
 import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class GaleriPage extends StatefulWidget {
-  const GaleriPage({Key? key}) : super(key: key);
+class GaleriListPage extends StatefulWidget {
+  const GaleriListPage({Key? key}) : super(key: key);
 
   @override
-  State<GaleriPage> createState() => _GaleriPageState();
+  State<GaleriListPage> createState() => _GaleriListPageState();
 }
 
-class _GaleriPageState extends State<GaleriPage> {
+class _GaleriListPageState extends State<GaleriListPage> {
   final DatabaseReference _galeriRef =
       FirebaseDatabase.instance.ref().child('explore-kepri/galeri');
 
   List<Map<dynamic, dynamic>> galeriList = [];
-  String searchQuery = '';
   List<String> kabupatenList = [
     'Kota Tanjungpinang',
     'Kabupaten Bintan',
@@ -288,10 +286,10 @@ class _GaleriPageState extends State<GaleriPage> {
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          const GaleriListPage()));
+                                          const GaleriPage()));
                             },
                                 child: SvgPicture.asset(
-                                  'assets/icons/list.svg',
+                                  'assets/icons/grid.svg',
                                   color: blueColor,
                                   width: 25.0,
                                   height: 25.0,
@@ -311,36 +309,131 @@ class _GaleriPageState extends State<GaleriPage> {
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 15.0),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 1.0,
-                          mainAxisSpacing: 15.0,
-                          crossAxisSpacing: 15.0,
-                        ),
+                      sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                               Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                GaleriDetailPage(galeri: filteredGaleriList[index]),
-                          ),
-                        );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    filteredGaleriList[index]['urlPhoto'],
-                                    fit: BoxFit.cover,
+                            final galeri = filteredGaleriList[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15.0),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  child: Container(
+                                    width: 400,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      color: Colors.white.withOpacity(0.3),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(1),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 50,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: darkColor,
+                                                    width: 3.0,
+                                                  ),
+                                                ),
+                                                child: ClipOval(
+                                                  child: galeri['userPhotoUrl'] != null
+                                                      ? Image.network(
+                                                          galeri['userPhotoUrl'],
+                                                          width: 40,
+                                                          height: 40,
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder: (context, error, stackTrace) {
+                                                            return Image.asset(
+                                                              'assets/images/profil.png',
+                                                              width: 40,
+                                                              height: 40,
+                                                              fit: BoxFit.cover,
+                                                            );
+                                                          },
+                                                        )
+                                                      : Image.asset(
+                                                          'assets/images/profil.png',
+                                                          width: 40,
+                                                          height: 40,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      galeri['displayName'] ?? 'Nama Pengguna',
+                                                      style: TextStyle(
+                                                        color: darkColor,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontFamily: "Poppins",
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          'assets/icons/lokasi.svg',
+                                                          color: darkColor,
+                                                          width: 15.0,
+                                                          height: 15.0,
+                                                        ),
+                                                        Text(
+                                                          galeri['kabupaten'],
+                                                          style: TextStyle(
+                                                            color: darkColor,
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.normal,
+                                                            fontFamily: "Poppins",
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 15.0),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                            child: Image.network(
+                                              galeri['urlPhoto'],
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 25),
+                                          child: Text(
+                                            galeri['caption'],
+                                            textAlign: TextAlign.start,
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.normal,
+                                              fontFamily: "Poppins",
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -349,9 +442,6 @@ class _GaleriPageState extends State<GaleriPage> {
                           childCount: filteredGaleriList.length,
                         ),
                       ),
-                    ),
-                    const SliverPadding(
-                      padding: EdgeInsets.only(bottom: 100),
                     ),
                   ],
                 ),
