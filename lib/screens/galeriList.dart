@@ -410,7 +410,7 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 15.0),
+                                           vertical: 15.0, horizontal: 15.0),
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(10.0),
                                             child: Image.network(

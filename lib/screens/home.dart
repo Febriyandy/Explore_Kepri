@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:explore_kepri/screens/addFoto.dart';
 import 'package:explore_kepri/screens/destinasi.dart';
 import 'package:explore_kepri/screens/galeri.dart';
 import 'package:explore_kepri/screens/paket.dart';
@@ -240,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                              const AddFotoPage()));
+                              const PaketPage()));
                         },
                         child: Container(
                           height: 100,
