@@ -1,13 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
-
 import 'package:explore_kepri/screens/detailPaket.dart';
-import 'package:explore_kepri/utils/theme.dart';
+import 'package:explore_kepri/screens/pembayaran.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:explore_kepri/utils/theme.dart';
+import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart'; // Import untuk menggunakan NumberFormat
 
 class DetailPesananPage extends StatefulWidget {
   final String id;
@@ -47,13 +49,63 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
     }
   }
 
-  Future<void> _fetchPaketData() async {
+   Future<void> _fetchPaketData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
     if (data != null) {
       setState(() {
         paketData = data;
       });
+    }
+  }
+
+Future<void> _sendTransactionData() async {
+    try {
+      var data = {
+        'nama_pengguna': FirebaseAuth.instance.currentUser!.displayName!,
+        'email': FirebaseAuth.instance.currentUser!.email!,
+        'nama_paket': paketData!['nama_paket'],
+        'photoUrlPaket': paketData!['images'][0],
+        'tanggal_berwisata': _dateController.text,
+        'jumlah_orang': _jumlahOrangController.text,
+        'no_wa': _whatsappController.text,
+        'gross_amount': totalPembayaran.toString(),
+        'userId': FirebaseAuth.instance.currentUser!.uid,
+      };
+
+      var url = Uri.parse('http://192.168.217.116:7600/Transaksi/${widget.id}');
+      var response = await http.post(
+        url,
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 201) {
+        var responseData = jsonDecode(response.body);
+        var token = responseData['token'];
+
+        if (token != null) {
+          // Navigasi ke halaman pembayaran dengan membawa data yang diperlukan
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PembayaranPage(
+                id: widget.id,
+                paketData: paketData,
+                date: _dateController.text,
+                jumlahOrang: jumlahOrang,
+                totalPembayaran: totalPembayaran,
+              ),
+            ),
+          );
+        } else {
+          throw Exception('Token not found in response');
+        }
+      } else {
+        throw Exception('Failed to save transaction: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error sending transaction data: $error');
     }
   }
 
@@ -67,7 +119,7 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: blueColor, // Set the color here
+              primary: Colors.blue,
             ),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
@@ -541,16 +593,7 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {
-                            // Handle button tap
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailPesananPage(
-                                  id: widget.id,
-                                ),
-                              ),
-                            );
+                            _sendTransactionData(); // Call method to send data
                           },
                           borderRadius:
                               BorderRadius.circular(10.0),
@@ -578,4 +621,3 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
     );
   }
 }
-
