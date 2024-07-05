@@ -4,23 +4,24 @@ import 'package:explore_kepri/utils/theme.dart';
 
 List onbordingData = [
   {
-    "title":"Selamat Datang di\nExplore Kepri",
-    "image":"assets/images/onbording1.png",
-    "deskripsi":"Temukan pesona Kepulauan Riau yang memukau, dari pantai berpasir putih hingga budaya lokal yang kaya. Mulailah petualangan Anda di sini dan nikmati pengalaman yang tak terlupakan",
+    "title": "Selamat Datang di\nExplore Kepri",
+    "image": "assets/images/onbording1.png",
+    "deskripsi":
+        "Temukan pesona Kepulauan Riau yang memukau, dari pantai berpasir putih hingga budaya lokal yang kaya. Mulailah petualangan Anda di sini dan nikmati pengalaman yang tak terlupakan",
   },
   {
-    "title":"Jelajahi Destinasi\nMenakjubkan",
-    "image":"assets/images/onbording2.png",
-    "deskripsi":"Dengan Explore Kepri, Anda bisa menjelajahi berbagai destinasi menakjubkan. Dapatkan informasi lengkap tentang tempat-tempat wisata dan paket wisata",
+    "title": "Jelajahi Destinasi\nMenakjubkan",
+    "image": "assets/images/onbording2.png",
+    "deskripsi":
+        "Dengan Explore Kepri, Anda bisa menjelajahi berbagai destinasi menakjubkan. Dapatkan informasi lengkap tentang tempat-tempat wisata dan paket wisata",
   },
   {
-    "title":"Paket Wisata Spesial\n dan Esklusif",
-    "image":"assets/images/onbording3.png",
-    "deskripsi":"Nikmati kemudahan merencanakan liburan Anda dengan paket wisata spesial dari Explore Kepri. Kami menawarkan paket petualangan hingga liburan santai",
+    "title": "Paket Wisata Spesial\n dan Esklusif",
+    "image": "assets/images/onbording3.png",
+    "deskripsi":
+        "Nikmati kemudahan merencanakan liburan Anda dengan paket wisata spesial dari Explore Kepri. Kami menawarkan paket petualangan hingga liburan santai",
   },
-  
 ];
-
 
 class OnbordingView extends StatefulWidget {
   const OnbordingView({super.key});
@@ -32,10 +33,12 @@ class OnbordingView extends StatefulWidget {
 class _OnbordingViewState extends State<OnbordingView> {
   final PageController pageController = PageController();
   int currentpage = 0;
+
+//Widget untuk menampilkan 3 halaman onbording bagi user yang belum login
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Mengganti warna Background
+      backgroundColor: Colors.white, 
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
@@ -43,7 +46,7 @@ class _OnbordingViewState extends State<OnbordingView> {
               Expanded(
                 child: PageView.builder(
                   controller: pageController,
-                  onPageChanged: (v){
+                  onPageChanged: (v) {
                     print(v.toString());
                     setState(() {
                       currentpage = v;
@@ -55,7 +58,8 @@ class _OnbordingViewState extends State<OnbordingView> {
                       children: [
                         const SizedBox(height: 30),
                         Padding(
-                          padding: const EdgeInsets.only(left: 20.0, top: 100.0),
+                          padding:
+                              const EdgeInsets.only(left: 20.0, top: 100.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
@@ -102,7 +106,7 @@ class _OnbordingViewState extends State<OnbordingView> {
                   },
                 ),
               ),
-              const SizedBox(height: 24), // Menambahkan jarak di bawah PageView
+              const SizedBox(height: 24), 
               Column(
                 children: [
                   Padding(
@@ -114,9 +118,9 @@ class _OnbordingViewState extends State<OnbordingView> {
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeInOut,
                           decoration: BoxDecoration(
-                              color: currentpage == 0 ? darkColor : grayColor,
-                              borderRadius: BorderRadius.circular(1000),
-                            ),
+                            color: currentpage == 0 ? darkColor : grayColor,
+                            borderRadius: BorderRadius.circular(1000),
+                          ),
                           height: 8,
                           width: currentpage == 0 ? 20 : 8,
                         ),
@@ -124,9 +128,9 @@ class _OnbordingViewState extends State<OnbordingView> {
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeInOut,
                           decoration: BoxDecoration(
-                              color: currentpage == 1 ? darkColor : grayColor,
-                              borderRadius: BorderRadius.circular(1000),
-                            ),
+                            color: currentpage == 1 ? darkColor : grayColor,
+                            borderRadius: BorderRadius.circular(1000),
+                          ),
                           height: 8,
                           width: currentpage == 1 ? 20 : 8,
                         ),
@@ -134,9 +138,9 @@ class _OnbordingViewState extends State<OnbordingView> {
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeInOut,
                           decoration: BoxDecoration(
-                              color: currentpage == 2 ? darkColor : grayColor,
-                              borderRadius: BorderRadius.circular(1000),
-                            ),
+                            color: currentpage == 2 ? darkColor : grayColor,
+                            borderRadius: BorderRadius.circular(1000),
+                          ),
                           height: 8,
                           width: currentpage == 2 ? 20 : 8,
                         ),
@@ -147,13 +151,15 @@ class _OnbordingViewState extends State<OnbordingView> {
                     padding: const EdgeInsets.symmetric(horizontal: 35),
                     child: GestureDetector(
                       onTap: () {
-                        if (currentpage == 2 ) {
+                        if (currentpage == 2) {
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                              const LoginView()));
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const LoginView()));
                         } else {
-                          pageController.animateToPage(currentpage+1, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut );
+                          pageController.animateToPage(currentpage + 1,
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut);
                         }
                         print("Ketuk Untuk Selanjutnya");
                       },
@@ -169,7 +175,9 @@ class _OnbordingViewState extends State<OnbordingView> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          currentpage == 2 ? "Mulai Sekarang" : "Ketuk Untuk Selanjutnya",
+                          currentpage == 2
+                              ? "Mulai Sekarang"
+                              : "Ketuk Untuk Selanjutnya",
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontFamily: "Poppins",
@@ -182,7 +190,9 @@ class _OnbordingViewState extends State<OnbordingView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 50), // Menambahkan jarak antara button dan bagian bawah layar
+              const SizedBox(
+                  height:
+                      50),
             ],
           );
         },

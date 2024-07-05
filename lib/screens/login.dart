@@ -1,7 +1,13 @@
+import 'dart:developer';
+
+import 'package:explore_kepri/controllers/auth_contriller.dart';
+import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/screens/register.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:get/get.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -12,12 +18,23 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool isHide = true;
+  final auth = AuthController();
 
+  final email = TextEditingController();
+  final password = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    email.dispose();
+    password.dispose();
+  }
+
+//Widget menampilkan halaman login
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset:
-            false, // Menonaktifkan pergeseran otomatis saat keyboard muncul
+        resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           child: Container(
             decoration: const BoxDecoration(
@@ -26,9 +43,7 @@ class _LoginViewState extends State<LoginView> {
                 fit: BoxFit.cover,
               ),
             ),
-            height: MediaQuery.of(context)
-                .size
-                .height, // Menggunakan tinggi layar penuh
+            height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
                 Align(
@@ -110,6 +125,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
+                                  controller: email,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -154,6 +170,7 @@ class _LoginViewState extends State<LoginView> {
                                   ),
                                 ),
                                 TextFormField(
+                                  controller: password,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -215,7 +232,9 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 // Add space between text fields and button
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    _login();
+                                  },
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
@@ -257,7 +276,9 @@ class _LoginViewState extends State<LoginView> {
                                 ),
 
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    _loginGoogle();
+                                  },
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
@@ -337,5 +358,30 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ));
+  }
+
+  goToHome(BuildContext context) => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LandingPage()),
+      );
+
+//fungsi untuk login dengan google
+  _loginGoogle() async {
+    final users = await auth.loginWithGoogle();
+    if (users != null) {
+      log("User Logged In");
+      goToHome(context);
+    }
+  }
+
+//fungsi untuk login dengan email dan password
+  _login() async {
+    final user =
+        await auth.loginUserWithEmailAndPassword(email.text, password.text);
+
+    if (user != null) {
+      log("User Logged In");
+      goToHome(context);
+    }
   }
 }

@@ -1,7 +1,14 @@
+import 'dart:developer';
+
+import 'package:explore_kepri/controllers/auth_contriller.dart';
+import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/screens/login.dart';
 import 'package:explore_kepri/utils/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -12,11 +19,21 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   bool isHide = true;
-  final TextEditingController namaController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confPasswordController = TextEditingController();
- 
+  final auth = AuthController();
+
+  final nama = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    nama.dispose();
+    email.dispose();
+    password.dispose();
+  }
+
+//widget menampilkan form untuk melakukan register atau pendaftaran bagi user yang belum memiliki akun
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +92,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 Positioned(
-                  top: 230,
+                  top: 260,
                   left: 0,
                   right: 0,
                   child: Center(
@@ -85,7 +102,7 @@ class _RegisterViewState extends State<RegisterView> {
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
                           width: 350,
-                          height: 530,
+                          height: 450,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20.0),
@@ -112,7 +129,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: namaController,
+                                  controller: nama,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -155,7 +172,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: emailController,
+                                  controller: email,
                                   style: TextStyle(
                                       color: darkColor,
                                       fontSize: 14,
@@ -200,7 +217,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: passwordController,
+                                  controller: password,
                                   obscureText: isHide,
                                   style: TextStyle(
                                       color: darkColor,
@@ -244,68 +261,12 @@ class _RegisterViewState extends State<RegisterView> {
                                           borderSide: BorderSide(
                                               color: darkColor, width: 2.0))),
                                 ),
-                                 Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                                  child: Text(
-                                    "Konfirmasi Password",
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: "Poppins",
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: darkColor,
-                                    ),
-                                  ),
-                                ),
-                                TextFormField(
-                                  controller: confPasswordController,
-                                  obscureText: isHide,
-                                  style: TextStyle(
-                                      color: darkColor,
-                                      fontSize: 14,
-                                      fontFamily: "Poppins"),
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isHide = !isHide;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          isHide
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: grayColor,
-                                          size: 18,
-                                        ),
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 12.5, horizontal: 14),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          borderSide: const BorderSide(
-                                              width: 0,
-                                              style: BorderStyle.none)),
-                                      hintText: "Konfirmasi Password",
-                                      hintStyle: TextStyle(
-                                        color: grayColor,
-                                        fontSize: 14,
-                                        fontFamily: "Poppins",
-                                      ),
-                                      fillColor: Colors.white.withOpacity(0.5),
-                                      filled: true,
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          borderSide: BorderSide(
-                                              color: darkColor, width: 2.0))),
-                                ),
-                                const SizedBox(height: 20),
+                                 
+                                const SizedBox(height: 30),
                                 GestureDetector(
-                                  onTap: (){}, 
+                                  onTap: (){
+                                   _signup();
+                                  }, 
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
@@ -375,4 +336,53 @@ class _RegisterViewState extends State<RegisterView> {
           ),
         ));
   }
+  
+
+//fungsi untuk masuk kehalaman landingpage ketika register berhasil
+ void goToHome(BuildContext context) => Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LandingPage()),
+    );
+
+//fungsi untuk melakukan register dengan email dan password
+Future<void> _signup() async {
+  try {
+    final user =
+        await auth.createUserWithEmailAndPassword(email.text, password.text);
+    if (user != null) {
+      log("User Created Successfully");
+      await user.updateProfile(displayName: nama.text);
+      log("Display Name Updated Successfully");
+      await _saveUserData(user);
+      goToHome(context);
+    }
+  } catch (e) {
+    log("Error: $e");
+  }
+}
+
+
+//fungsi untuk menyimpan data user kedalam realtime database firebase
+Future<void> _saveUserData(User user) async {
+  try {
+    DatabaseReference userRef = FirebaseDatabase.instance
+        .ref()
+        .child('explore-kepri')
+        .child('users');
+
+
+    await user.reload();
+    user = FirebaseAuth.instance.currentUser!;
+
+    await userRef.child(user.uid).set({
+      'uid': user.uid,
+      'email': user.email,
+      'displayName': user.displayName ?? '',
+      'photoURL': user.photoURL ?? '',
+    });
+  } catch (e) {
+    print('Error saving user data: $e');
+  }
+}
+
 }

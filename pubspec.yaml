@@ -36,6 +36,23 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   rename: ^3.0.2
   firebase_core: ^3.1.0
+  firebase_auth: ^5.1.0
+  get: ^4.6.6
+  google_sign_in: ^6.2.1
+  firebase_database: ^11.0.2
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  carousel_slider: ^4.2.1
+  flutter_osm_plugin: ^1.0.5
+  image_picker: ^1.1.2
+  firebase_storage: ^12.1.0
+  modal_progress_hud_nsn: ^0.5.1
+  shimmer: ^3.0.0
+  fancy_shimmer_image: ^2.0.3
+  intl: ^0.19.0
+  http: ^1.2.1
+  webview_flutter: ^3.0.0
+  #webview_flutter: ^4.8.0
 
 dev_dependencies:
   flutter_test:
@@ -67,8 +84,8 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/icons/
     - assets/fonts/
+    - assets/icons/
 
   fonts:
     - family: Poppins
