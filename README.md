@@ -17,7 +17,7 @@ Sebelum memulai, pastikan Anda memiliki:
     `cd Explore-Kepri`
 3. Install Dependencies
     `flutter pub get`
-4. Konfigurasi Firebase+
+4. Konfigurasi Firebase
     - Buat project baru di Firebase Console.
     - Tambahkan aplikasi Android dan/atau iOS ke project Firebase.
     - Unduh file google-services.json (untuk Android) dan/atau GoogleService-Info.plist (untuk iOS) dan letakkan di direktori yang sesuai:
@@ -34,21 +34,6 @@ Sebelum memulai, pastikan Anda memiliki:
 3. Autentikasi Pengguna: Menggunakan Firebase Authentication untuk pendaftaran dan login pengguna.
 4. Integrasi Firebase: Menggunakan Firebase untuk menyimpan dan mengelola data aplikasi.
 
-## Struktur Project
-Explore-Kepri/
-├── android/
-├── ios/
-├── assets/
-├── lib/
-│   ├── main.dart
-│   ├── firebase_options.dart
-│   ├── screens/
-│   ├── constrollers/
-│   └── utils/
-├── pubspec.yaml
-├── README.md
-└── test/
-
 ## Kontak dan Dukungan
 
 Jika Anda memiliki pertanyaan atau memerlukan bantuan lebih lanjut, silakan hubungi kami di [2101020062@student.umrah.ac.id].
@@ -59,7 +44,7 @@ Jika Anda memiliki pertanyaan atau memerlukan bantuan lebih lanjut, silakan hubu
 - Ahda Kamalia (2101020053)
 - Marsela Zailanti (2101020070)
 - Rizky Ramadhani Kalingga Putra (2101020040)
--Julian Jau'hari (2101020004)
+- Julian Jau'hari (2101020004)
 
 
 
