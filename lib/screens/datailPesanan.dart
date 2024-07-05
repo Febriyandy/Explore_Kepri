@@ -38,6 +38,7 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
     _getCurrentUser();
   }
 
+//Fungsi untuk mendapatkan data user
   Future<void> _getCurrentUser() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -47,6 +48,7 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
     }
   }
 
+//Fungsi untuk mendapatkan data paket wisata
    Future<void> _fetchPaketData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -57,11 +59,10 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
     }
   }
 
+//Fungsi untuk mengirimkan data transaksi ke halaman pembayaran
 Future<void> _sendTransactionData() async {
   try {
-    // Pastikan data yang diperlukan sudah ada sebelum navigasi
     if (FirebaseAuth.instance.currentUser != null && paketData != null) {
-      // Navigasi ke halaman pembayaran dengan membawa data yang diperlukan
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -82,7 +83,7 @@ Future<void> _sendTransactionData() async {
   }
 }
 
-
+//Fungsi untuk menampilkan kalender  yang di modifikasi
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
@@ -93,7 +94,7 @@ Future<void> _sendTransactionData() async {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.blue,
+              primary: darkColor,
             ),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
@@ -110,6 +111,7 @@ Future<void> _sendTransactionData() async {
     }
   }
 
+//Fungsi untuk menghitung total harga pembayaran paket wisata
   void calculateTotalPembayaran() {
     if (paketData != null) {
       switch (paketData!['lama_kegiatan']) {
@@ -224,6 +226,8 @@ Future<void> _sendTransactionData() async {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+
+//Menampilkan foto dari database paket wisata
                                 Container(
                                   width: 120,
                                   height: 120,
@@ -247,6 +251,8 @@ Future<void> _sendTransactionData() async {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+
+//Menampilkan Nama Paket Wisata
                                     Text(
                                       paketData != null
                                           ? 'Paket Wisata \n${paketData!['nama_paket']}'
@@ -258,6 +264,8 @@ Future<void> _sendTransactionData() async {
                                         fontFamily: "Poppins",
                                       ),
                                     ),
+
+//Menampilkan Lama kegiatan
                                     Padding(
                                       padding: const EdgeInsets.only(top: 10.0),
                                       child: Text(
@@ -282,7 +290,9 @@ Future<void> _sendTransactionData() async {
                   ),
                   const SizedBox(
                       height:
-                          20), // Tambahkan jarak antara kotak putih dan teks "Destinasi Wisata"
+                          20),
+
+//Form Pemesanan Paket Wisata
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Text(
@@ -330,6 +340,8 @@ Future<void> _sendTransactionData() async {
                                       ),
                                     ),
                                   ),
+
+//Field Untuk menginputkan tanggal
                                   TextFormField(
                                     controller: _dateController,
                                     readOnly: true,
@@ -388,6 +400,8 @@ Future<void> _sendTransactionData() async {
                                       ),
                                     ),
                                   ),
+
+//Field untuk menginputkan jumlah orang
                                   TextFormField(
                                     controller:
                                         _jumlahOrangController,
@@ -453,6 +467,8 @@ Future<void> _sendTransactionData() async {
                                       ),
                                     ),
                                   ),
+
+//Field untuk menginputkan jumlah orang
                                   TextFormField(
                                     controller: _whatsappController,
                                     keyboardType:
@@ -506,6 +522,8 @@ Future<void> _sendTransactionData() async {
               ),
             ),
           ),
+
+//Button untuk menampilkan totol harga dan melakukan pembayaran
           Positioned(
             left: 0,
             right: 0,

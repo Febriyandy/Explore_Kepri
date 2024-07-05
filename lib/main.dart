@@ -6,16 +6,17 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:get/get.dart';
 
 void main() async {
-  // Inisialisasi Firebase sebelum menjalankan aplikasi
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Jalankan aplikasi
+ 
   runApp(MyApp());
 }
 
+//Halaman utama untuk menjalankan aplikasi
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -25,7 +26,6 @@ class MyApp extends StatelessWidget {
             title: 'Explore Kepri',
             debugShowCheckedModeBanner: false,
             home: AnimatedSplashScreen(
-              // Tampilan splash screen dengan animasi
               splash: LayoutBuilder(
                 builder: (context, constraints) {
                   return Center(
@@ -38,9 +38,9 @@ class MyApp extends StatelessWidget {
                   );
                 },
               ),
-              duration: 3000, // Durasi splash screen (dalam milidetik)
-              splashTransition: SplashTransition.fadeTransition, // Transisi animasi
-              nextScreen: const  Wrapper(), // Layar selanjutnya setelah splash screen
+              duration: 3000,
+              splashTransition: SplashTransition.fadeTransition, 
+              nextScreen: const  Wrapper(), 
             ),
           );
         }

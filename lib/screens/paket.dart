@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:explore_kepri/screens/detailDestinasi.dart';
 import 'package:explore_kepri/screens/detailPaket.dart';
 import 'package:explore_kepri/screens/landing.dart';
 import 'package:explore_kepri/utils/theme.dart';
@@ -15,6 +14,7 @@ class PaketPage extends StatefulWidget {
 }
 
 class _PaketPageState extends State<PaketPage> {
+//Fungsi mendapatkan data dari firebase
   final DatabaseReference _paketRef =
       FirebaseDatabase.instance.ref().child('explore-kepri/paket_wisata');
 
@@ -31,6 +31,8 @@ class _PaketPageState extends State<PaketPage> {
   ];
   List<String> selectedKabupaten = [];
 
+
+//Fungsi untuk menampilkan data dari firebase
   @override
   void initState() {
     super.initState();
@@ -53,6 +55,7 @@ class _PaketPageState extends State<PaketPage> {
     });
   }
 
+//fungsi fiter berdasarkan kabupaten  dan pencarian berdasarkan nama paker
   List<Map<dynamic, dynamic>> get filteredPaketList {
     return paketList.where((paket) {
       final namaPaket = paket['nama_paket'].toString().toLowerCase();
@@ -63,6 +66,7 @@ class _PaketPageState extends State<PaketPage> {
     }).toList();
   }
 
+//popup untuk menampilkan filter
   void _showFilterPopup() {
     showDialog(
       context: context,
@@ -336,6 +340,8 @@ class _PaketPageState extends State<PaketPage> {
                   ],
                 ),
               ),
+
+//Widget menampilkan data paket wisata 
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -414,11 +420,12 @@ class _PaketPageState extends State<PaketPage> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                                      MainAxisAlignment.end,
                                                   children: [
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                          .only(top: 20.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 20.0),
                                                       child: Container(
                                                         width: 110,
                                                         height: 30,
@@ -437,20 +444,24 @@ class _PaketPageState extends State<PaketPage> {
                                                           ),
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(5.0),
+                                                                  .circular(
+                                                                      5.0),
                                                         ),
                                                         child: Center(
                                                           child:
                                                               GestureDetector(
                                                             onTap: () {
                                                               Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (context) => DetailPaketPage(
-                                                                  id: paket['id'],
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          DetailPaketPage(
+                                                                    id: paket[
+                                                                        'id'],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            );
+                                                              );
                                                             },
                                                             child: const Text(
                                                               "Lihat Detail",

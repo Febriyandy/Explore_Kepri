@@ -19,6 +19,8 @@ class DetailPaketPage extends StatefulWidget {
 }
 
 class _DetailPaketPageState extends State<DetailPaketPage> {
+
+//fungsi untuk mendapatkan data dari firebase
   final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.ref().child('explore-kepri/paket_wisata');
 
@@ -36,6 +38,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
     _getCurrentUser();
   }
 
+//Fungsi untuk mendapatkan user yang sedang login
   Future<void> _getCurrentUser() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -45,6 +48,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
     }
   }
 
+//Fungsi untuk mendapatkan data destinasi berdasarkan id
   Future<void> _fetchPaketData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -55,6 +59,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
     }
   }
 
+//Fungsi untuk mnghitung rating berdasarkan nilai bintang
   void _hitungRating() {
     if (ulasanData != null && ulasanData!.isNotEmpty) {
       double totalRating = 0.0;
@@ -76,14 +81,13 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
     }
   }
 
+//fungsi mendapatkan data ulasan pengguna
   Future<void> _fetchUlasanData() async {
     DatabaseEvent event =
         await _databaseReference.child('${widget.id}/ulasan').once();
     var data = event.snapshot.value;
-
     if (data != null && data is Map) {
       List<dynamic> dataList = data.values.toList();
-
       setState(() {
         ulasanData = dataList;
       });
@@ -115,8 +119,6 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                     SizedBox(
                       height: MediaQuery.of(context).padding.top,
                     ),
-
-                    
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -163,7 +165,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                       : Column(
                           children: [
 
-
+//menampilkan foto paket wisata
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 20.0, horizontal: 25.0),
@@ -179,7 +181,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ),
                             ),
 
-
+//menampilkan nama paket dan lokasi wisata
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +229,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                   ),
                                 ),
 
-
+//menampilkan rating paket wisata
                                 Padding(
                                   padding: const EdgeInsets.only(right: 25.0),
                                   child: Row(
@@ -286,7 +288,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ],
                             ),
 
-
+//menampilkan text destinasi
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 25.0),
@@ -304,7 +306,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ),
                             ),
 
-
+//menampilkan data data destinasi tujuan dalam paket wisata
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25.0),
@@ -383,7 +385,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ),
                             ),
 
-
+//menampilkan data rangkaian kegiatan
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15.0, horizontal: 25.0),
@@ -400,8 +402,6 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                 ),
                               ),
                             ),
-
-
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25.0),
@@ -481,7 +481,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ),
                             ),
 
-
+//menampilkan data fasilitas yang diberikan
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15.0, horizontal: 25.0),
@@ -498,8 +498,6 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                 ),
                               ),
                             ),
-
-
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25.0),
@@ -578,7 +576,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ),
                             ),
 
-
+//menampilkan daftar biaya yang ditawarkan
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15.0, horizontal: 25.0),
@@ -595,8 +593,6 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                 ),
                               ),
                             ),
-
-
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25.0),
@@ -675,7 +671,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                               ),
                             ),
 
-
+//menampilkan data ulasan dan button tulis ulasan
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15.0, horizontal: 25.0),
@@ -692,8 +688,6 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                 ),
                               ),
                             ),
-
-
                             const SizedBox(height: 5),
                             ulasanData == null
                                 ? const SizedBox(
@@ -717,8 +711,6 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                       ),
                                     ),
                                   ),
-
-
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 20, 0, 60),
                               child: Container(
@@ -768,7 +760,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
     );
   }
 
-//Fungsi untuk mendapatkan data ulasan
+//Fungsi untuk mendapatkan data  dan widget ulasan
   Widget _buildUlasanCard(dynamic ulasan) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),

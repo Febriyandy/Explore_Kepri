@@ -17,6 +17,7 @@ class GaleriPage extends StatefulWidget {
 }
 
 class _GaleriPageState extends State<GaleriPage> {
+//Mendapatkan data galeri dari firebase
   final DatabaseReference _galeriRef =
       FirebaseDatabase.instance.ref().child('explore-kepri/galeri');
 
@@ -33,6 +34,7 @@ class _GaleriPageState extends State<GaleriPage> {
   ];
   List<String> selectedKabupaten = [];
 
+//Fungsi untuk filter foto dari galeri berdasarkan lokasi kabupaten
   List<Map<dynamic, dynamic>> get filteredGaleriList {
     return galeriList.where((galeri) {
       final kabupaten = galeri['kabupaten'].toString();
@@ -40,6 +42,8 @@ class _GaleriPageState extends State<GaleriPage> {
     }).toList();
   }
 
+
+//Widget popup untuk melakukan filter
   void _showFilterPopup() {
     showDialog(
       context: context,
@@ -167,6 +171,7 @@ class _GaleriPageState extends State<GaleriPage> {
     );
   }
 
+//Fungsi untuk mendapatkan data gaelri dari firebase
   @override
   void initState() {
     super.initState();
@@ -305,6 +310,8 @@ class _GaleriPageState extends State<GaleriPage> {
                   ],
                 ),
               ),
+
+//Widget mendampilkan data galeri dalam bentuk grid
               Expanded(
                 child: CustomScrollView(
                   slivers: [

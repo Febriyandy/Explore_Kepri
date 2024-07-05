@@ -33,6 +33,7 @@ class _RegisterViewState extends State<RegisterView> {
     password.dispose();
   }
 
+//widget menampilkan form untuk melakukan register atau pendaftaran bagi user yang belum memiliki akun
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -337,11 +338,13 @@ class _RegisterViewState extends State<RegisterView> {
   }
   
 
+//fungsi untuk masuk kehalaman landingpage ketika register berhasil
  void goToHome(BuildContext context) => Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LandingPage()),
     );
 
+//fungsi untuk melakukan register dengan email dan password
 Future<void> _signup() async {
   try {
     final user =
@@ -350,7 +353,6 @@ Future<void> _signup() async {
       log("User Created Successfully");
       await user.updateProfile(displayName: nama.text);
       log("Display Name Updated Successfully");
-      // Panggil _saveUserData setelah user berhasil dibuat dan profil diperbarui
       await _saveUserData(user);
       goToHome(context);
     }
@@ -359,6 +361,8 @@ Future<void> _signup() async {
   }
 }
 
+
+//fungsi untuk menyimpan data user kedalam realtime database firebase
 Future<void> _saveUserData(User user) async {
   try {
     DatabaseReference userRef = FirebaseDatabase.instance
@@ -366,7 +370,7 @@ Future<void> _saveUserData(User user) async {
         .child('explore-kepri')
         .child('users');
 
-    // Reload user to ensure updated information
+
     await user.reload();
     user = FirebaseAuth.instance.currentUser!;
 

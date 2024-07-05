@@ -1,6 +1,7 @@
 import 'package:explore_kepri/controllers/auth_contriller.dart';
 import 'package:explore_kepri/screens/onbording.dart';
 import 'package:explore_kepri/utils/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfilPage extends StatefulWidget {
@@ -11,8 +12,10 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-  final auth = AuthController();
+  final AuthController auth = AuthController();
+  User? user = FirebaseAuth.instance.currentUser;
 
+//widget untuk menampilkan halaman profil dan melakukan logout dari aplikasi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +27,7 @@ class _ProfilPageState extends State<ProfilPage> {
               fit: BoxFit.cover,
             ),
           ),
-          height: MediaQuery.of(context).size.height, // Menggunakan tinggi layar penuh
+          height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
               Align(
@@ -39,15 +42,35 @@ class _ProfilPageState extends State<ProfilPage> {
                 ),
               ),
               Positioned.fill(
+                top: 140,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Profil Page',
+                    if (user?.photoURL != null)
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundImage: NetworkImage(user!.photoURL!),
+                      )
+                    else
+                      const CircleAvatar(
+                        radius: 50,
+                        backgroundImage: AssetImage('assets/images/profil.png'),
+                      ),
+                    const SizedBox(height: 20),
+                    Text(
+                      user?.displayName ?? 'Guest',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: darkColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      user?.email ?? 'Email not available',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: darkColor,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -90,7 +113,7 @@ class _ProfilPageState extends State<ProfilPage> {
   }
 
   void goToLogin(BuildContext context) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const OnbordingView()),
     );

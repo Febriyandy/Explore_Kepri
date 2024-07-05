@@ -33,10 +33,10 @@ class _AddFotoPageState extends State<AddFotoPage> {
 
   bool _isLoading = false;
 
+//Fungsi untuk preview gambar sebelum di upload
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
         selectedImage = File(pickedFile.path);
@@ -50,32 +50,24 @@ class _AddFotoPageState extends State<AddFotoPage> {
     });
   }
 
+//Fungsi untuk menyimpan foto firebase
   Future<void> _uploadImage() async {
     if (selectedImage == null || selectedLocation == null) return;
-
     setState(() {
       _isLoading = true;
     });
-
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
-
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('galeri/${DateTime.now().millisecondsSinceEpoch}');
       final UploadTask uploadTask = storageRef.putFile(selectedImage!);
-
-      // Update UI for progress indicator
       uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
         final progress = snapshot.bytesTransferred / snapshot.totalBytes;
       });
-
-      // Await until upload completes
       await uploadTask;
-
       final imageUrl = await storageRef.getDownloadURL();
-
       final databaseRef =
           FirebaseDatabase.instance.ref('explore-kepri/galeri').push();
       await databaseRef.set({
@@ -85,7 +77,6 @@ class _AddFotoPageState extends State<AddFotoPage> {
         'displayName': user.displayName ?? 'Anonymous',
         'userPhotoUrl': user.photoURL ?? '',
       });
-
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -93,8 +84,6 @@ class _AddFotoPageState extends State<AddFotoPage> {
           selectedLocation = null;
           captionController.clear();
         });
-
-        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Foto berhasil dikirim'),
@@ -107,7 +96,6 @@ class _AddFotoPageState extends State<AddFotoPage> {
         _isLoading = false;
       });
       print('Error uploading image: $e');
-      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Gagal mengirim foto. Silakan coba lagi.'),
@@ -116,6 +104,7 @@ class _AddFotoPageState extends State<AddFotoPage> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +123,8 @@ class _AddFotoPageState extends State<AddFotoPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 100),
+
+//Kotak untuk mengupload foto
                   Padding(
                     padding:
                     const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
@@ -233,6 +224,8 @@ class _AddFotoPageState extends State<AddFotoPage> {
                       ),
                     ),
                   ),
+
+//form untuk mengisi data lokasi
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                     child: Align(
@@ -293,6 +286,8 @@ class _AddFotoPageState extends State<AddFotoPage> {
                       ),
                     ),
                   ),
+
+//Form untuk mengisi caption postingan
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
                     child: Align(
@@ -340,6 +335,8 @@ class _AddFotoPageState extends State<AddFotoPage> {
                       maxLines: 6,
                     ),
                   ),
+
+//Button untuk mengirim postingan
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: _isLoading

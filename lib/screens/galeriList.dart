@@ -16,6 +16,7 @@ class GaleriListPage extends StatefulWidget {
 }
 
 class _GaleriListPageState extends State<GaleriListPage> {
+//Mendapatkan data galeri dari firebase
   final DatabaseReference _galeriRef =
       FirebaseDatabase.instance.ref().child('explore-kepri/galeri');
 
@@ -31,6 +32,7 @@ class _GaleriListPageState extends State<GaleriListPage> {
   ];
   List<String> selectedKabupaten = [];
 
+//Fungsi untuk memfilter foto galeri berdasarkan lokasi kabupaten
   List<Map<dynamic, dynamic>> get filteredGaleriList {
     return galeriList.where((galeri) {
       final kabupaten = galeri['kabupaten'].toString();
@@ -38,6 +40,7 @@ class _GaleriListPageState extends State<GaleriListPage> {
     }).toList();
   }
 
+//Widget popup untuk menampilkan filter
   void _showFilterPopup() {
     showDialog(
       context: context,
@@ -165,6 +168,7 @@ class _GaleriListPageState extends State<GaleriListPage> {
     );
   }
 
+//Fungsi untuk mendapatkan data galeri
   @override
   void initState() {
     super.initState();
@@ -283,11 +287,11 @@ class _GaleriListPageState extends State<GaleriListPage> {
                               padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
                               child: GestureDetector(
                                 onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          const GaleriPage()));
-                            },
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              const GaleriPage()));
+                                },
                                 child: SvgPicture.asset(
                                   'assets/icons/grid.svg',
                                   color: blueColor,
@@ -303,6 +307,8 @@ class _GaleriListPageState extends State<GaleriListPage> {
                   ],
                 ),
               ),
+
+//Widget untuk menampilkan data foto galeri dengan bentuk list scroll
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -314,11 +320,13 @@ class _GaleriListPageState extends State<GaleriListPage> {
                           (BuildContext context, int index) {
                             final galeri = filteredGaleriList[index];
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15.0),
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                                   child: Container(
                                     width: 400,
                                     decoration: BoxDecoration(
@@ -329,10 +337,12 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                       ),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 15, 15, 0),
                                           child: Row(
                                             children: [
                                               Container(
@@ -346,13 +356,18 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                                   ),
                                                 ),
                                                 child: ClipOval(
-                                                  child: galeri['userPhotoUrl'] != null
+                                                  child: galeri[
+                                                              'userPhotoUrl'] !=
+                                                          null
                                                       ? Image.network(
-                                                          galeri['userPhotoUrl'],
+                                                          galeri[
+                                                              'userPhotoUrl'],
                                                           width: 40,
                                                           height: 40,
                                                           fit: BoxFit.cover,
-                                                          errorBuilder: (context, error, stackTrace) {
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
                                                             return Image.asset(
                                                               'assets/images/profil.png',
                                                               width: 40,
@@ -372,14 +387,17 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                               const SizedBox(width: 10),
                                               Expanded(
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      galeri['displayName'] ?? 'Nama Pengguna',
+                                                      galeri['displayName'] ??
+                                                          'Nama Pengguna',
                                                       style: TextStyle(
                                                         color: darkColor,
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontFamily: "Poppins",
                                                       ),
                                                     ),
@@ -396,8 +414,11 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                                           style: TextStyle(
                                                             color: darkColor,
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.normal,
-                                                            fontFamily: "Poppins",
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontFamily:
+                                                                "Poppins",
                                                           ),
                                                         ),
                                                       ],
@@ -410,9 +431,10 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
-                                           vertical: 15.0, horizontal: 15.0),
+                                              vertical: 15.0, horizontal: 15.0),
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(10.0),
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
                                             child: Image.network(
                                               galeri['urlPhoto'],
                                               fit: BoxFit.cover,
@@ -420,7 +442,8 @@ class _GaleriListPageState extends State<GaleriListPage> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 25),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 10, 15, 25),
                                           child: Text(
                                             galeri['caption'],
                                             textAlign: TextAlign.start,

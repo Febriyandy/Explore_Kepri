@@ -1,18 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-import 'package:explore_kepri/screens/transaksi.dart'; // Sesuaikan dengan lokasi file Anda
-import 'package:explore_kepri/utils/theme.dart'; // Sesuaikan dengan lokasi file Anda
+import 'package:explore_kepri/screens/transaksi.dart'; 
+import 'package:explore_kepri/utils/theme.dart'; 
 
 class DetailTransaksiPage extends StatefulWidget {
   final String id;
@@ -24,6 +21,8 @@ class DetailTransaksiPage extends StatefulWidget {
 }
 
 class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
+
+//Mendapatkan data trabsaksi dari firebase
   final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.ref().child('explore-kepri/transaksi');
 
@@ -39,6 +38,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
     _getStatusTransaksi();
   }
 
+//Fungsi mendapatkan data user yang sedang login
   Future<void> _getCurrentUser() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -48,6 +48,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
     }
   }
 
+//Fungsi untuk mendapatkan data transaksi
   Future<void> _fetchTransaksiData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -62,6 +63,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
     }
   }
 
+//Fungsi untuk mengupdate status transaksi
   Future<void> _getStatusTransaksi() async {
     try {
       String url = 'http://localhost:7600/Status/${widget.id}';
@@ -157,6 +159,8 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                   const SizedBox(
                     height: 20,
                   ),
+
+//Widget untuk menampilkan detail transaksi
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Stack(
@@ -440,7 +444,8 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 5.0),
                                             child: Text(
-                                              _statusPembayaran ?? '',
+                                              transaksiData![
+                                                  'status_pembayaran'],
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 14,
@@ -473,11 +478,11 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                             text: "0851-6259-8308"));
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                              const SnackBar(
-                                                content:
-                                                    Text("Copied to Clipboard"),
-                                              ),
-                                            );
+                                          const SnackBar(
+                                            content:
+                                                Text("Copied to Clipboard"),
+                                          ),
+                                        );
                                       },
                                       child: Container(
                                         width: double.infinity,

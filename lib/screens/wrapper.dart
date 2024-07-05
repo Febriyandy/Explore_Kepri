@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
 
+//fungsi untuk menentukan halaman jika user apakah sudah login atau belum
   @override
   Widget build(BuildContext context) {
     return Scaffold(

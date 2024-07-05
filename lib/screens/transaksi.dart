@@ -16,9 +16,10 @@ class TransaksiPage extends StatefulWidget {
 }
 
 class _TransaksiPageState extends State<TransaksiPage> {
+//Mendapatkan data transaksi dari firebase
   final DatabaseReference _transaksiRef =
       FirebaseDatabase.instance.ref().child('explore-kepri/transaksi');
-  
+
   List<Map<dynamic, dynamic>> tempTransaksiList = [];
 
   @override
@@ -27,12 +28,16 @@ class _TransaksiPageState extends State<TransaksiPage> {
     _fetchUserTransactions();
   }
 
+//mendapatkan data transaksi berdasarkan id user yang sedang login
   Future<void> _fetchUserTransactions() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Query untuk mengambil transaksi berdasarkan userId
-        _transaksiRef.orderByChild('userId').equalTo(user.uid).onValue.listen((event) {
+        _transaksiRef
+            .orderByChild('userId')
+            .equalTo(user.uid)
+            .onValue
+            .listen((event) {
           var snapshot = event.snapshot;
           var data = snapshot.value as Map<dynamic, dynamic>?;
           if (data != null) {
@@ -43,7 +48,6 @@ class _TransaksiPageState extends State<TransaksiPage> {
               tempTransaksiList.add(transaksi);
             });
             setState(() {
-              // Update state setelah data transaksi diambil
               tempTransaksiList;
             });
           } else {
@@ -141,12 +145,13 @@ class _TransaksiPageState extends State<TransaksiPage> {
                   ],
                 ),
               ),
+
+//widget untuk menampilkan data transaksi
               Expanded(
                 child: CustomScrollView(
                   slivers: [
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
@@ -228,11 +233,12 @@ class _TransaksiPageState extends State<TransaksiPage> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                                      MainAxisAlignment.end,
                                                   children: [
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                          .only(top: 20.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 20.0),
                                                       child: Container(
                                                         width: 110,
                                                         height: 30,
@@ -251,20 +257,24 @@ class _TransaksiPageState extends State<TransaksiPage> {
                                                           ),
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(5.0),
+                                                                  .circular(
+                                                                      5.0),
                                                         ),
                                                         child: Center(
                                                           child:
                                                               GestureDetector(
                                                             onTap: () {
                                                               Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (context) => DetailTransaksiPage(
-                                                                  id: transaksi['id'],
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          DetailTransaksiPage(
+                                                                    id: transaksi[
+                                                                        'id'],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            );
+                                                              );
                                                             },
                                                             child: const Text(
                                                               "Lihat Detail",

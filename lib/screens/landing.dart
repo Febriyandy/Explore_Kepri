@@ -22,10 +22,11 @@ class _LandingPageState extends State<LandingPage> {
     ProfilPage(),
   ];
 
+//widget untuk membuat button navigatin bar menu
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Menghindari pergeseran saat keyboard muncul
+      resizeToAvoidBottomInset: false, 
       body: Stack(
         children: [
           IndexedStack(

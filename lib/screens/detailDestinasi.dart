@@ -20,12 +20,12 @@ class DetailDestinasiPage extends StatefulWidget {
 
 class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
   final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
-  Map<dynamic, dynamic>? destinasiData;
-  List<dynamic>? ulasanData;
-  TextEditingController _reviewController = TextEditingController();
-  double _ratingValue = 0.0;
-  String? _userId;
+    FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
+    Map<dynamic, dynamic>? destinasiData;
+    List<dynamic>? ulasanData;
+    TextEditingController _reviewController = TextEditingController();
+    double _ratingValue = 0.0;
+    String? _userId;
 
   @override
   void initState() {
@@ -295,8 +295,8 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
           'displayName': user.displayName ?? 'Nama Pengguna',
           'photoURL': user.photoURL ?? 'https://example.com/avatar.jpg',
         }).then((_) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Ulasan berhasil dikirim')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Ulasan berhasil dikirim')));
           _fetchUlasanData();
         }).catchError((error) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -896,5 +896,3 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     );
   }
 }
-
-

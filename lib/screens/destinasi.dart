@@ -14,6 +14,7 @@ class DestinasiPage extends StatefulWidget {
 }
 
 class _DestinasiPageState extends State<DestinasiPage> {
+//Fungsi untuk mendapatkan data destinasi dari firebase
   final DatabaseReference _destinasiRef =
       FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
 
@@ -30,6 +31,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
   ];
   List<String> selectedKabupaten = [];
 
+//Fungsi untuk mendapatkan data destinasi
   @override
   void initState() {
     super.initState();
@@ -52,6 +54,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
     });
   }
 
+//Fungsi untuk pencarian berdasarkan nama dan filter berdasarkan kabupaten/kota
   List<Map<dynamic, dynamic>> get filteredDestinasiList {
     return destinasiList.where((destinasi) {
       final namaTempat = destinasi['nama_tempat'].toString().toLowerCase();
@@ -62,6 +65,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
     }).toList();
   }
 
+//Widget popup yang muncul untuk melakukan filter berdasarkan kabupaten/kota
   void _showFilterPopup() {
     showDialog(
       context: context,
@@ -70,7 +74,7 @@ class _DestinasiPageState extends State<DestinasiPage> {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             color:
-                Colors.white.withOpacity(0.1), // Adding white blur background
+                Colors.white.withOpacity(0.1), 
             child: AlertDialog(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -116,10 +120,10 @@ class _DestinasiPageState extends State<DestinasiPage> {
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                    30.0), // Rounded border
+                                    30.0),
                                 side: BorderSide(
                                     color:
-                                        darkColor), // Ganti darkColor dengan warna yang Anda inginkan
+                                        darkColor), 
                               ),
                               labelStyle: TextStyle(
                                 color: selectedKabupaten.contains(kabupaten)
@@ -147,7 +151,6 @@ class _DestinasiPageState extends State<DestinasiPage> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: blueColor,
-                              
                             ),
                           ),
                         ),
@@ -249,6 +252,8 @@ class _DestinasiPageState extends State<DestinasiPage> {
                         ),
                       ],
                     ),
+
+//widget kolom pencarian
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       child: Container(
@@ -343,6 +348,8 @@ class _DestinasiPageState extends State<DestinasiPage> {
                   ],
                 ),
               ),
+
+//widget menampilkan data destinasi
               Expanded(
                 child: CustomScrollView(
                   slivers: [

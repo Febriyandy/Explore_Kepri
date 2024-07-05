@@ -10,6 +10,7 @@ class GaleriDetailPage extends StatelessWidget {
 
   const GaleriDetailPage({Key? key, required this.galeri}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,6 +86,7 @@ class GaleriDetailPage extends StatelessWidget {
   }
 }
 
+//Widget untuk menampilkan detail foto galeri
 Widget _buildGaleriCard(Map<dynamic, dynamic> galeri) {
   return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -204,7 +206,7 @@ Widget _buildGaleriCard(Map<dynamic, dynamic> galeri) {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             galeri['caption'],
-                             textAlign: TextAlign.start,
+                            textAlign: TextAlign.start,
                             style: const TextStyle(
                               color: Colors.black87,
                               fontSize: 14,

@@ -13,16 +13,16 @@ class AuthController {
   Future<UserCredential?> loginWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
-
       final googleAuth = await googleUser?.authentication;
-
       final cred = GoogleAuthProvider.credential(
         idToken: googleAuth?.idToken,
         accessToken: googleAuth?.accessToken,
       );
 
-      final UserCredential userCredential = await auth.signInWithCredential(cred);
-      await _saveUserData(userCredential.user!);  // Save user data to Realtime Database
+      final UserCredential userCredential =
+          await auth.signInWithCredential(cred);
+      await _saveUserData(
+          userCredential.user!); 
       return userCredential;
     } catch (e) {
       print(e.toString());
@@ -38,10 +38,7 @@ class AuthController {
         email: email,
         password: password,
       );
-
-      // Simpan data pengguna ke Realtime Database
       await _saveUserData(cred.user!);
-
       return cred.user;
     } catch (e) {
       print('Error creating user: $e');
@@ -76,9 +73,8 @@ class AuthController {
   // Fungsi untuk menyimpan data pengguna ke Realtime Database
   Future<void> _saveUserData(User user) async {
     try {
-      DatabaseReference userRef = FirebaseDatabase.instance.ref().child('explore-kepri').child('users');
-
-      // Ambil data pengguna dari Firebase Auth untuk memastikan displayName dan photoURL yang terbaru
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('explore-kepri').child('users');
       await user.reload();
       user = FirebaseAuth.instance.currentUser!;
 
@@ -88,7 +84,6 @@ class AuthController {
         'email': user.email,
         'displayName': user.displayName ?? '',
         'photoURL': user.photoURL ?? '',
-        // tambahkan data pengguna lain yang ingin Anda simpan
       });
     } catch (e) {
       print('Error saving user data: $e');

@@ -30,11 +30,11 @@ class _LoginViewState extends State<LoginView> {
     password.dispose();
   }
 
+//Widget menampilkan halaman login
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset:
-            false, // Menonaktifkan pergeseran otomatis saat keyboard muncul
+        resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           child: Container(
             decoration: const BoxDecoration(
@@ -43,9 +43,7 @@ class _LoginViewState extends State<LoginView> {
                 fit: BoxFit.cover,
               ),
             ),
-            height: MediaQuery.of(context)
-                .size
-                .height, // Menggunakan tinggi layar penuh
+            height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
                 Align(
@@ -279,7 +277,7 @@ class _LoginViewState extends State<LoginView> {
 
                                 GestureDetector(
                                   onTap: () {
-                                   _loginGoogle();
+                                    _loginGoogle();
                                   },
                                   child: Container(
                                     width: double.infinity,
@@ -360,22 +358,23 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ));
-        
   }
-  
+
   goToHome(BuildContext context) => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LandingPage()),
       );
 
-  _loginGoogle() async{
+//fungsi untuk login dengan google
+  _loginGoogle() async {
     final users = await auth.loginWithGoogle();
-     if (users != null) {
+    if (users != null) {
       log("User Logged In");
       goToHome(context);
     }
   }
 
+//fungsi untuk login dengan email dan password
   _login() async {
     final user =
         await auth.loginUserWithEmailAndPassword(email.text, password.text);
