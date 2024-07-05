@@ -59,6 +59,7 @@ Jika Anda memiliki pertanyaan atau memerlukan bantuan lebih lanjut, silakan hubu
 - Ahda Kamalia (2101020053)
 - Marsela Zailanti (2101020070)
 - Rizky Ramadhani Kalingga Putra (2101020040)
+
 -Julian Jau'hari (2101020004)
 
 
