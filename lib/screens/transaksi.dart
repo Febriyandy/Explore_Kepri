@@ -151,7 +151,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                 child: CustomScrollView(
                   slivers: [
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 60),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
@@ -228,6 +228,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                                                   style: TextStyle(
                                                     fontSize: 10,
                                                     fontFamily: "Poppins",
+                                                    fontWeight: FontWeight.w700,
                                                     color: darkColor,
                                                   ),
                                                 ),

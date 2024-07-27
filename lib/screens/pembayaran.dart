@@ -26,15 +26,28 @@ class PembayaranPage extends StatefulWidget {
 }
 
 class _PembayaranPageState extends State<PembayaranPage> {
-  late WebViewController _controller;
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    WebView.platform = SurfaceAndroidWebView();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            print('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            print('Page finished loading: $url');
+          },
+          onWebResourceError: (WebResourceError error) {
+            print('Page resource error: $error');
+          },
+        ),
+      );
   }
 
-//Widget untuk menampikan webview payment gatway midtrans
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,13 +64,8 @@ class _PembayaranPageState extends State<PembayaranPage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (snapshot.hasData && snapshot.data != null) {
-              return WebView(
-                initialUrl: snapshot.data!,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (WebViewController webViewController) {
-                  _controller = webViewController;
-                },
-              );
+              _controller.loadRequest(Uri.parse(snapshot.data!));
+              return WebViewWidget(controller: _controller);
             } else {
               return Center(child: Text('Failed to load payment page'));
             }
@@ -83,7 +91,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
         'userId': FirebaseAuth.instance.currentUser!.uid,
       };
 
-      var url = Uri.parse('http://192.168.217.116:7600/Transaksi/${widget.id}');
+      var url = Uri.parse('https://adm.febriyandy.xyz/Transaksi/${widget.id}');
       var response = await http.post(
         url,
         body: jsonEncode(data),

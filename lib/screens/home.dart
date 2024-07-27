@@ -26,8 +26,8 @@ class _HomePageState extends State<HomePage> {
   List<Map<dynamic, dynamic>> destinasiList = [];
   String searchQuery = '';
 
-//fungsi untuk mendapatkan data destinasi
-  @override 
+//fungsi untuk mendapatkan data destinasi rekomendasi berdasarkan nilai rating tertinggi
+  @override
   void initState() {
     super.initState();
     _destinasiRef.onValue.listen((event) {
@@ -40,8 +40,16 @@ class _HomePageState extends State<HomePage> {
           destinasi['id'] = key;
           tempDestinasiList.add(destinasi);
         });
+
+        // Sorting based on rating and taking the top 6
+        tempDestinasiList.sort((a, b) {
+          double ratingA = (a['rating'] ?? 0).toDouble();
+          double ratingB = (b['rating'] ?? 0).toDouble();
+          return ratingB.compareTo(ratingA);
+        });
+
         setState(() {
-          destinasiList = tempDestinasiList;
+          destinasiList = tempDestinasiList.take(6).toList();
         });
       } else {
         print('Data from Firebase is null or empty');
@@ -51,11 +59,14 @@ class _HomePageState extends State<HomePage> {
 
 //fungsi untuk pencarian berdasarkan nama destinasi
   List<Map<dynamic, dynamic>> get filteredDestinasiList {
-    return destinasiList.take(6).where((destinasi) {
+    // Filter destinasiList berdasarkan searchQuery
+    var filteredList = destinasiList.where((destinasi) {
       final namaTempat = destinasi['nama_tempat'].toString().toLowerCase();
       final searchLower = searchQuery.toLowerCase();
       return namaTempat.contains(searchLower);
     }).toList();
+
+    return filteredList;
   }
 
   @override
@@ -83,7 +94,7 @@ class _HomePageState extends State<HomePage> {
               width: 150,
             ),
           ),
-          
+
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -359,7 +370,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
+                padding: const EdgeInsets.only(left: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -379,125 +390,110 @@ class _HomePageState extends State<HomePage> {
           ),
           // Widget menampilkan destinasi wisata rekomendasi
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.46,
-            bottom: 0,
+            top: MediaQuery.of(context).size.height *
+                0.45, // Adjust this value as needed
             left: 0,
             right: 0,
             child: Container(
+              height: 200, // Set a specific height for the carousel
               decoration: BoxDecoration(
                 color: Colors.transparent,
               ),
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 15.0),
-                    sliver: SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.8,
-                        mainAxisSpacing: 20.0,
-                        crossAxisSpacing: 20.0,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                itemCount: filteredDestinasiList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var destinasi = filteredDestinasiList[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailDestinasiPage(
+                            id: destinasi['id'],
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                          right: 20.0), // Spacing between cards
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          var destinasi = filteredDestinasiList[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailDestinasiPage(
-                                    id: destinasi['id'],
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    child: AspectRatio(
-                                      aspectRatio: 0.8,
-                                      child: Image.network(
-                                        destinasi['images'][0],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(15.0),
-                                      bottomRight: Radius.circular(15.0),
-                                    ),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                          sigmaX: 2, sigmaY: 2),
-                                      child: Container(
-                                        height: 55,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.transparent,
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(15.0),
-                                            bottomRight: Radius.circular(15.0),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10.0,
-                                            vertical: 10.0,
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                destinasi['nama_tempat'],
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(
-                                                destinasi['kabupaten'],
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15.0),
+                        child: Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 0.8,
+                              child: Image.network(
+                                destinasi['images'][0],
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          );
-                        },
-                        childCount: filteredDestinasiList.length,
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15.0),
+                                  bottomRight: Radius.circular(15.0),
+                                ),
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                  child: Container(
+                                    height: 55,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(15.0),
+                                        bottomRight: Radius.circular(15.0),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 10.0,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            destinasi['nama_tempat'],
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            destinasi['kabupaten'],
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SliverPadding(
-                    padding: EdgeInsets.only(bottom: 100),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
