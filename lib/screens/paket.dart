@@ -31,7 +31,6 @@ class _PaketPageState extends State<PaketPage> {
   ];
   List<String> selectedKabupaten = [];
 
-
 //Fungsi untuk menampilkan data dari firebase
   @override
   void initState() {
@@ -218,7 +217,7 @@ class _PaketPageState extends State<PaketPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushReplacement(
@@ -235,7 +234,7 @@ class _PaketPageState extends State<PaketPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 50, 20, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
                           child: Align(
                             alignment: Alignment.topRight,
                             child: Image.asset(
@@ -341,7 +340,7 @@ class _PaketPageState extends State<PaketPage> {
                 ),
               ),
 
-//Widget menampilkan data paket wisata 
+//Widget menampilkan data paket wisata
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -422,6 +421,41 @@ class _PaketPageState extends State<PaketPage> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.end,
                                                   children: [
+//menampilkan rating paket wisata
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.fromLTRB(0, 20, 11, 0),
+                                                      child: Row(
+                                                        children: [
+                                                          const Icon(
+                                                            Icons.star,
+                                                            color:
+                                                                Colors.orange,
+                                                            size: 18,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text(
+                                                            paket['rating'] !=
+                                                                    null
+                                                                ? paket['rating']
+                                                                    .toStringAsFixed(
+                                                                        1)
+                                                                : '-',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: darkColor,
+                                                              fontFamily:
+                                                                  "Poppins",
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(

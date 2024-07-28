@@ -352,11 +352,11 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                     child: Container(
                       color: Colors.white,
                       width: double.infinity,
-                      height: 140,
+                      height: 120,
                       child: Stack(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 85, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pushReplacement(
@@ -375,7 +375,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(70, 85, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(70, 65, 0, 0),
                             child: Text(
                               "Detail Transaksi",
                               style: TextStyle(
@@ -428,7 +428,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 50),
+                                  SizedBox(height: 5),
                                   Text(
                                     transaksiData!['nama_paket'],
                                     textAlign: TextAlign.center,
@@ -439,6 +439,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                       color: darkColor,
                                     ),
                                   ),
+                                  
                                   SizedBox(height: 20),
                                   _buildDetailRow(
                                       'Nama', transaksiData!['nama_pengguna']),

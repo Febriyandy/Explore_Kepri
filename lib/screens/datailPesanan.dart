@@ -185,11 +185,11 @@ Future<void> _sendTransactionData() async {
                     child: Container(
                       color: Colors.white,
                       width: double.infinity,
-                      height: 280,
+                      height: 250,
                       child: Stack(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 85, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pushReplacement(
@@ -209,7 +209,7 @@ Future<void> _sendTransactionData() async {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(70, 85, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(70, 65, 0, 0),
                             child: Text(
                               "Detail Pemesanan",
                               style: TextStyle(
@@ -222,7 +222,7 @@ Future<void> _sendTransactionData() async {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 120.0),
+                            padding: const EdgeInsets.only(top: 90.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
