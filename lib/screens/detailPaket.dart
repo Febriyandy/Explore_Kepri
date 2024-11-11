@@ -123,7 +123,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushReplacement(
@@ -142,7 +142,7 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: Text(
                             "Paket Wisata",
                             style: TextStyle(

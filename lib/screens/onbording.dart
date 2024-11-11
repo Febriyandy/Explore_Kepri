@@ -59,12 +59,12 @@ class _OnbordingViewState extends State<OnbordingView> {
                         const SizedBox(height: 30),
                         Padding(
                           padding:
-                              const EdgeInsets.only(left: 20.0, top: 100.0),
+                              const EdgeInsets.only( top: 100.0),
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Text(
                               onbordingData[i]['title'],
-                              textAlign: TextAlign.left,
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: "PoppinsSemiBold",
                                 fontSize: 24,

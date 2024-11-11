@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:explore_kepri/screens/transaksi.dart';
+import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -26,43 +29,128 @@ class PembayaranPage extends StatefulWidget {
 }
 
 class _PembayaranPageState extends State<PembayaranPage> {
-  late WebViewController _controller;
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    WebView.platform = SurfaceAndroidWebView();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            print('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            print('Page finished loading: $url');
+          },
+          onWebResourceError: (WebResourceError error) {
+            print('Page resource error: $error');
+          },
+        ),
+      );
   }
 
-//Widget untuk menampikan webview payment gatway midtrans
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pembayaran'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: FutureBuilder<String>(
-          future: _fetchToken(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (snapshot.hasData && snapshot.data != null) {
-              return WebView(
-                initialUrl: snapshot.data!,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (WebViewController webViewController) {
-                  _controller = webViewController;
-                },
-              );
-            } else {
-              return Center(child: Text('Failed to load payment page'));
-            }
-          },
-        ),
+      body: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/latarbelakang.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(25.0),
+                      bottomRight: Radius.circular(25.0),
+                    ),
+                    child: Container(
+                      color: Colors.white,
+                      width: double.infinity,
+                      height: 120,
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        TransaksiPage(),
+                                  ),
+                                );
+                              },
+                              child: SvgPicture.asset(
+                                'assets/icons/back.svg',
+                                color: blueColor,
+                                width: 30.0,
+                                height: 30.0,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(70, 65, 0, 0),
+                            child: Text(
+                              "Pembayaran",
+                              style: TextStyle(
+                                color: darkColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: FutureBuilder<String>(
+                      future: _fetchToken(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (snapshot.hasData && snapshot.data != null) {
+                          _controller.loadRequest(Uri.parse(snapshot.data!));
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height - 140,
+                            child: WebViewWidget(controller: _controller),
+                          );
+                        } else {
+                          return Center(
+                              child: Text('Failed to load payment page'));
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -83,7 +171,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
         'userId': FirebaseAuth.instance.currentUser!.uid,
       };
 
-      var url = Uri.parse('http://192.168.217.116:7600/Transaksi/${widget.id}');
+      var url = Uri.parse('https://adm.febriyandy.xyz/Transaksi/${widget.id}');
       var response = await http.post(
         url,
         body: jsonEncode(data),

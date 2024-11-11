@@ -343,7 +343,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushReplacement(
@@ -361,7 +361,7 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: Text(
                             "Destinasi Wisata",
                             style: TextStyle(

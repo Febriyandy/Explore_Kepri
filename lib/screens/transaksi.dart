@@ -91,7 +91,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushReplacement(
@@ -108,7 +108,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 50, 20, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
                           child: Align(
                             alignment: Alignment.topRight,
                             child: Image.asset(
@@ -151,7 +151,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                 child: CustomScrollView(
                   slivers: [
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 60),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
@@ -228,6 +228,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                                                   style: TextStyle(
                                                     fontSize: 10,
                                                     fontFamily: "Poppins",
+                                                    fontWeight: FontWeight.w700,
                                                     color: darkColor,
                                                   ),
                                                 ),

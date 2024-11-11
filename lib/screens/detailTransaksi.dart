@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:explore_kepri/screens/transaksi.dart'; 
-import 'package:explore_kepri/utils/theme.dart'; 
+import 'package:explore_kepri/screens/transaksi.dart';
+import 'package:explore_kepri/utils/theme.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
   final String id;
@@ -21,10 +21,11 @@ class DetailTransaksiPage extends StatefulWidget {
 }
 
 class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
-
-//Mendapatkan data trabsaksi dari firebase
+  //Menghubungkan ke realtime database
   final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.ref().child('explore-kepri/transaksi');
+  double _ratingValue = 0.0;
+  TextEditingController _reviewController = TextEditingController();
 
   Map<dynamic, dynamic>? transaksiData;
   String? _userId;
@@ -38,7 +39,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
     _getStatusTransaksi();
   }
 
-//Fungsi mendapatkan data user yang sedang login
+//fungsi untuk mendapatkan data user
   Future<void> _getCurrentUser() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -48,7 +49,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
     }
   }
 
-//Fungsi untuk mendapatkan data transaksi
+//fungsi untuk mendaptkan data transaksi
   Future<void> _fetchTransaksiData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -63,17 +64,16 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
     }
   }
 
-//Fungsi untuk mengupdate status transaksi
+//fungsi untuk update status pembayaran
   Future<void> _getStatusTransaksi() async {
     try {
-      String url = 'http://localhost:7600/Status/${widget.id}';
+      String url = 'https://adm.febriyandy.xyz/Status/${widget.id}';
       var response = await http.get(Uri.parse(url));
-
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
+        var status = jsonDecode(response.body); // Parse status jika diperlukan
         setState(() {
-          _statusPembayaran = data['transaction_status'];
-          transaksiData!['status_pembayaran'] = _statusPembayaran;
+          _statusPembayaran =
+              status['status']; // Sesuaikan dengan struktur respons Anda
         });
       } else {
         throw Exception('Failed to load status');
@@ -82,6 +82,242 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
       print('Error fetching status: $e');
     }
   }
+
+  //Fungsi untuk menampilkan popup menambahkan ulasan
+  void _showReviewDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Container(
+                color: Colors.white.withOpacity(0.2),
+                child: AlertDialog(
+                  title: Text(
+                    "Tulis Ulasan",
+                    style: TextStyle(
+                      color: darkColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Poppins",
+                    ),
+                  ),
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  content: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _ratingValue = 1.0;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.star,
+                                  color: _ratingValue >= 1
+                                      ? Colors.orange
+                                      : Colors.grey,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _ratingValue = 2.0;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.star,
+                                  color: _ratingValue >= 2
+                                      ? Colors.orange
+                                      : Colors.grey,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _ratingValue = 3.0;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.star,
+                                  color: _ratingValue >= 3
+                                      ? Colors.orange
+                                      : Colors.grey,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _ratingValue = 4.0;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.star,
+                                  color: _ratingValue >= 4
+                                      ? Colors.orange
+                                      : Colors.grey,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _ratingValue = 5.0;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.star,
+                                  color: _ratingValue >= 5
+                                      ? Colors.orange
+                                      : Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Input untuk deskripsi ulasan
+                        TextField(
+                          controller: _reviewController,
+                          decoration: InputDecoration(
+                            labelText: "Ulasan",
+                            labelStyle: TextStyle(
+                              color: darkColor,
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: darkColor),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: darkColor),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: darkColor.withOpacity(0.5)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: darkColor,
+                            fontFamily: "Poppins",
+                          ),
+                          maxLines: 6,
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "Batal",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 120,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [darkColor, primary],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            _submitReview();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            "Kirim",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+//Fungsi untuk menyimpan Ulasan
+  void _submitReview() {
+  if (_userId != null) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Mengambil paketId dari data transaksi
+      final paketId = transaksiData?['paketId'] ?? ''; 
+
+      // Memastikan paketId valid
+      if (paketId.isNotEmpty) {
+        // Mengakses referensi ke node ulasan di bawah paket_wisata dengan paketId yang sesuai
+        DatabaseReference ulasanRef = FirebaseDatabase.instance
+            .ref()
+            .child('explore-kepri/paket_wisata/$paketId/ulasan')
+            .push();
+
+        ulasanRef.set({
+          'nilai_bintang': _ratingValue,
+          'deskripsi_ulasan': _reviewController.text,
+          'id_user': _userId,
+          'displayName': user.displayName ?? 'Nama Pengguna',
+          'photoURL': user.photoURL ?? 'https://example.com/avatar.jpg',
+        }).then((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Ulasan berhasil dikirim')));
+          // Optionally clear the review fields or navigate away
+          _reviewController.clear();
+          setState(() {
+            _ratingValue = 0;
+          });
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal mengirim ulasan: $error')));
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Gagal mengirim ulasan: Paket ID tidak ditemukan')));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Gagal mengirim ulasan: User tidak ditemukan')));
+    }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Gagal mengirim ulasan: ID User tidak tersedia')));
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,11 +352,11 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                     child: Container(
                       color: Colors.white,
                       width: double.infinity,
-                      height: 140,
+                      height: 120,
                       child: Stack(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 85, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pushReplacement(
@@ -132,20 +368,18 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                               },
                               child: SvgPicture.asset(
                                 'assets/icons/back.svg',
-                                color:
-                                    blueColor, // Sesuaikan dengan warna yang Anda tentukan
+                                color: blueColor,
                                 width: 30.0,
                                 height: 30.0,
                               ),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(70, 85, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(70, 65, 0, 0),
                             child: Text(
                               "Detail Transaksi",
                               style: TextStyle(
-                                color:
-                                    darkColor, // Sesuaikan dengan warna yang Anda tentukan
+                                color: darkColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: "Poppins",
@@ -156,11 +390,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-
-//Widget untuk menampilkan detail transaksi
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Stack(
@@ -198,7 +428,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 50),
+                                  SizedBox(height: 5),
                                   Text(
                                     transaksiData!['nama_paket'],
                                     textAlign: TextAlign.center,
@@ -209,162 +439,18 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                       color: darkColor,
                                     ),
                                   ),
+                                  
                                   SizedBox(height: 20),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Nama',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          transaksiData!['nama_pengguna'],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.bold,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Email',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          transaksiData!['email'],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.bold,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Tanggal',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          transaksiData!['tanggal_berwisata'],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.bold,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Jumlah Orang',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${transaksiData!['jumlah_orang']} Orang',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.bold,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0, vertical: 5.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Status Perjalanan',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          transaksiData!['status_pembayaran'],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "Poppins",
-                                            fontWeight: FontWeight.bold,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  _buildDetailRow(
+                                      'Nama', transaksiData!['nama_pengguna']),
+                                  _buildDetailRow(
+                                      'Email', transaksiData!['email']),
+                                  _buildDetailRow('Tanggal',
+                                      transaksiData!['tanggal_berwisata']),
+                                  _buildDetailRow('Jumlah Orang',
+                                      '${transaksiData!['jumlah_orang']} Orang'),
+                                  _buildDetailRow('Status Perjalanan',
+                                      transaksiData!['status_perjalanan']),
                                   SizedBox(height: 10),
                                   Text(
                                     'Detail Transaksi',
@@ -460,83 +546,17 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                     ),
                                   ),
                                   SizedBox(height: 10),
-                                  Text(
-                                    'Silahkan hubungin nomor di bawah ini untuk memberikan lokasi penjemputan.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: "Poppins",
-                                      color: darkColor,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15.0, horizontal: 10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Clipboard.setData(const ClipboardData(
-                                            text: "0851-6259-8308"));
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content:
-                                                Text("Copied to Clipboard"),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 13.5,
-                                          horizontal:
-                                              16.0, // Adjust padding to accommodate the icon
-                                        ),
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [darkColor, primary],
-                                            begin: Alignment.centerLeft,
-                                            end: Alignment.centerRight,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: const Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .center, // Centering content horizontally
-                                          children: [
-                                            Icon(
-                                              Icons.copy,
-                                              color: Colors.white,
-                                              size: 18.0,
-                                            ),
-                                            SizedBox(
-                                                width:
-                                                    8.0), // Adjust spacing between icon and text
-                                            Center(
-                                              child: Text(
-                                                "0851-6259-8308",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontFamily: "Poppins",
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  if (transaksiData!['status_perjalanan'] ==
+                                      'Selesai')
+                                    _buildReviewButton()
+                                  else
+                                    _buildContactButton(context),
                                 ],
                               ),
                             ),
-                          ),
-                        if (transaksiData == null)
-                          Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                          )
+                        else
+                          Center(child: CircularProgressIndicator()),
                       ],
                     ),
                   ),
@@ -546,6 +566,150 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
           ),
         ],
       ),
+    );
+  }
+
+//Widget menampilkan style detail transaksi
+  Widget _buildDetailRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: "Poppins",
+              color: darkColor,
+            ),
+          ),
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.bold,
+              color: darkColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+//widget menambilkan tombol tambah ulasan
+  Widget _buildReviewButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+      child: GestureDetector(
+        onTap: () {
+        _showReviewDialog();
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            vertical: 13.5,
+            horizontal: 16.0,
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [darkColor, primary],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Text(
+                  "Tambah Ulasan",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+//Widget menampilkan nomor admin penjemputan
+  Widget _buildContactButton(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Silahkan hubungin nomor di bawah ini untuk memberikan lokasi penjemputan.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            fontFamily: "Poppins",
+            color: darkColor,
+          ),
+        ),
+        const SizedBox(height: 15.0), // Jarak antara Text dan Container
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: GestureDetector(
+            onTap: () {
+              Clipboard.setData(const ClipboardData(text: "0851-6259-8308"));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Copied to Clipboard"),
+                ),
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                vertical: 13.5,
+                horizontal: 16.0,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [darkColor, primary],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.copy,
+                    color: Colors.white,
+                    size: 18.0,
+                  ),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    "0851-6259-8308",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

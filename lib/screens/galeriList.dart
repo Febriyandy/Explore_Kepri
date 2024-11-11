@@ -220,7 +220,7 @@ class _GaleriListPageState extends State<GaleriListPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushReplacement(
@@ -237,7 +237,7 @@ class _GaleriListPageState extends State<GaleriListPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 50, 20, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
                           child: Align(
                             alignment: Alignment.topRight,
                             child: Image.asset(
