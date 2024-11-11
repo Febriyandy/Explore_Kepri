@@ -46,11 +46,21 @@ class _ProfilPageState extends State<ProfilPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 70,
-                      backgroundImage: user?.photoURL != null
-                          ? NetworkImage(user!.photoURL!)
-                          : const AssetImage('assets/images/profil.png') as ImageProvider,
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: darkColor,
+                          width: 3.0,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundImage: user?.photoURL != null
+                            ? NetworkImage(user!.photoURL!)
+                            : const AssetImage('assets/images/profil.png')
+                                as ImageProvider,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -71,9 +81,7 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                     const SizedBox(height: 10),
                     GestureDetector(
-                      onTap: () async {
-                        
-                      },
+                      onTap: () async {},
                       child: Container(
                         width: 180,
                         padding: const EdgeInsets.symmetric(vertical: 11),
@@ -98,22 +106,20 @@ class _ProfilPageState extends State<ProfilPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
-                              'Pengaturan Akun',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: darkColor,
-                                
-                              ),
-                                              ),
+                            'Pengaturan Akun',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: darkColor,
+                            ),
+                          ),
                         ),
                         ListTile(
                           leading: SvgPicture.asset(
