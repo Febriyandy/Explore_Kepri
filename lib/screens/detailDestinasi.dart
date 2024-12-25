@@ -4,11 +4,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:explore_kepri/screens/destinasi.dart';
 import 'package:explore_kepri/utils/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DetailDestinasiPage extends StatefulWidget {
   final String id;
@@ -20,17 +19,59 @@ class DetailDestinasiPage extends StatefulWidget {
 
 class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
   final DatabaseReference _databaseReference =
-    FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
-    Map<dynamic, dynamic>? destinasiData;
-    List<dynamic>? ulasanData;
-    TextEditingController _reviewController = TextEditingController();
-    double _ratingValue = 0.0;
-    String? _userId;
+      FirebaseDatabase.instance.ref().child('explore-kepri/destinasi');
+  Map<dynamic, dynamic>? destinasiData;
+  List<dynamic>? ulasanData;
+  TextEditingController _reviewController = TextEditingController();
+  double _ratingValue = 0.0;
+  String? _userId;
+  Completer<GoogleMapController> _mapController = Completer();
+  Set<Marker> _markers = {};
+  LatLng? _destinationLocation;
+
+  Future<void> _initializeMap() async {
+    if (destinasiData != null) {
+      try {
+        final lat = double.parse(destinasiData!['letitude']);
+        final lng = double.parse(destinasiData!['longitude']);
+        setState(() {
+          _destinationLocation = LatLng(lat, lng);
+          _markers.add(
+            Marker(
+              markerId: MarkerId('destinasi_${widget.id}'),
+              position: _destinationLocation!,
+              infoWindow: InfoWindow(
+                title: destinasiData!['nama_tempat'],
+                snippet: destinasiData!['alamat'],
+              ),
+            ),
+          );
+        });
+
+        final GoogleMapController controller = await _mapController.future;
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: _destinationLocation!,
+              zoom: 15,
+            ),
+          ),
+        );
+      } catch (e) {
+        print('Error initializing map: $e');
+      }
+    }
+  }
+
 
   @override
   void initState() {
     super.initState();
-    _fetchDestinasiData();
+    _fetchDestinasiData().then((_) {
+      if (mounted) {
+        _initializeMap();
+      }
+    });
     _fetchUlasanData();
     _getCurrentUser();
   }
@@ -278,6 +319,28 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
           },
         );
       },
+    );
+  }
+
+ Widget _buildGoogleMap() {
+    if (_destinationLocation == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: _destinationLocation!,
+        zoom: 15,
+      ),
+      markers: _markers,
+      mapType: MapType.normal,
+      onMapCreated: (GoogleMapController controller) {
+        _mapController.complete(controller);
+      },
+      zoomControlsEnabled: true,
+      zoomGesturesEnabled: true,
+      myLocationButtonEnabled: false,
+      myLocationEnabled: false,
     );
   }
 
@@ -638,67 +701,24 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
 
 //Container menampilkan peta berdasarkan latitude dan longitude dari database
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 25.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  color: Colors.white.withOpacity(0.2),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(1),
-                                  ),
-                                ),
-                                width: 400,
-                                height: 200,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  child: FlutterMap(
-                                    options: MapOptions(
-                                      // ignore: deprecated_member_use
-                                      center: LatLng(
-                                        double.parse(
-                                            destinasiData!['letitude']),
-                                        double.parse(
-                                            destinasiData!['longitude']),
-                                      ),
-                                      // ignore: deprecated_member_use
-                                      zoom: 11,
-                                      // ignore: deprecated_member_use
-                                      interactiveFlags: InteractiveFlag.all &
-                                          ~InteractiveFlag.doubleTapZoom,
-                                    ),
-                                    children: [
-                                      TileLayer(
-                                        urlTemplate:
-                                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                        userAgentPackageName:
-                                            'dev.fleaflet.flutter_map.example',
-                                      ),
-                                      MarkerLayer(
-                                        markers: [
-                                          Marker(
-                                            point: LatLng(
-                                              double.parse(
-                                                  destinasiData!['letitude']),
-                                              double.parse(
-                                                  destinasiData!['longitude']),
-                                            ),
-                                            width: 40,
-                                            height: 40,
-                                            alignment: Alignment.centerLeft,
-                                            child: const Icon(
-                                              Icons.location_pin,
-                                              size: 40,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+            padding: const EdgeInsets.symmetric(
+                vertical: 10.0, horizontal: 25.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+                color: Colors.white.withOpacity(0.2),
+                border: Border.all(
+                  color: Colors.white.withOpacity(1),
+                ),
+              ),
+              width: 400,
+              height: 200,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: _buildGoogleMap(),
+              ),
+            ),
+          ),
 
 //Container menampilkan text ulasan dan tombol tulis ulasan
                             Row(

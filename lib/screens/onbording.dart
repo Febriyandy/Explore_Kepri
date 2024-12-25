@@ -192,7 +192,7 @@ class _OnbordingViewState extends State<OnbordingView> {
               ),
               const SizedBox(
                   height:
-                      50),
+                      30),
             ],
           );
         },
