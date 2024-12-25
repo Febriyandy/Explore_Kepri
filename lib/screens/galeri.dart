@@ -42,6 +42,13 @@ class _GaleriPageState extends State<GaleriPage> {
     }).toList();
   }
 
+Future<bool> _onWillPop() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LandingPage()),
+    );
+    return false;
+  }
 
 //Widget popup untuk melakukan filter
   void _showFilterPopup() {
@@ -196,176 +203,180 @@ class _GaleriPageState extends State<GaleriPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/latarbelakang.png'),
-                fit: BoxFit.cover,
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/latarbelakang.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Column(
-            children: [
-              Container(
-                color: Colors.transparent,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).padding.top,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          const LandingPage()));
-                            },
-                            child: SvgPicture.asset(
-                              'assets/icons/back.svg',
-                              color: blueColor,
-                              width: 30.0,
-                              height: 30.0,
+            Column(
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).padding.top,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const LandingPage()));
+                              },
+                              child: SvgPicture.asset(
+                                'assets/icons/back.svg',
+                                color: blueColor,
+                                width: 30.0,
+                                height: 30.0,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: Image.asset(
-                              'assets/images/Logo.png',
-                              width: 150,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Image.asset(
+                                'assets/images/Logo.png',
+                                width: 150,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 20, 0, 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Galeri",
+                                  style: TextStyle(
+                                    color: darkColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
                             children: [
-                              Text(
-                                "Galeri",
-                                style: TextStyle(
-                                  color: darkColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: "Poppins",
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
+                                child: GestureDetector(
+                                  onTap: _showFilterPopup,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/filter.svg',
+                                    color: blueColor,
+                                    width: 25.0,
+                                    height: 25.0,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const GaleriListPage()));
+                              },
+                                  child: SvgPicture.asset(
+                                    'assets/icons/list.svg',
+                                    color: blueColor,
+                                    width: 25.0,
+                                    height: 25.0,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
-                              child: GestureDetector(
-                                onTap: _showFilterPopup,
-                                child: SvgPicture.asset(
-                                  'assets/icons/filter.svg',
-                                  color: blueColor,
-                                  width: 25.0,
-                                  height: 25.0,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 20, 20, 10),
-                              child: GestureDetector(
-                                onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          const GaleriListPage()));
-                            },
-                                child: SvgPicture.asset(
-                                  'assets/icons/list.svg',
-                                  color: blueColor,
-                                  width: 25.0,
-                                  height: 25.0,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-
-//Widget mendampilkan data galeri dalam bentuk grid
-              Expanded(
-                child: CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 15.0),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 1.0,
-                          mainAxisSpacing: 15.0,
-                          crossAxisSpacing: 15.0,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                               Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                GaleriDetailPage(galeri: filteredGaleriList[index]),
+      
+      //Widget mendampilkan data galeri dalam bentuk grid
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 15.0),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 1.0,
+                            mainAxisSpacing: 15.0,
+                            crossAxisSpacing: 15.0,
                           ),
-                        );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    filteredGaleriList[index]['urlPhoto'],
-                                    fit: BoxFit.cover,
+                          delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: () {
+                                 Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  GaleriDetailPage(galeri: filteredGaleriList[index]),
+                            ),
+                          );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Image.network(
+                                      filteredGaleriList[index]['urlPhoto'],
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                          childCount: filteredGaleriList.length,
+                              );
+                            },
+                            childCount: filteredGaleriList.length,
+                          ),
                         ),
                       ),
-                    ),
-                    const SliverPadding(
-                      padding: EdgeInsets.only(bottom: 100),
-                    ),
-                  ],
+                      const SliverPadding(
+                        padding: EdgeInsets.only(bottom: 100),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

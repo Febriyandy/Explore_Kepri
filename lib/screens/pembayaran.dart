@@ -171,7 +171,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
         'userId': FirebaseAuth.instance.currentUser!.uid,
       };
 
-      var url = Uri.parse('https://adm.febriyandy.xyz/Transaksi/${widget.id}');
+      var url = Uri.parse('https://api-explore-kepri.febriandi.my.id/Transaksi/${widget.id}');
       var response = await http.post(
         url,
         body: jsonEncode(data),
