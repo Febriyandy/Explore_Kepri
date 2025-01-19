@@ -72,19 +72,12 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
         _initializeMap();
       }
     });
+
     _fetchUlasanData();
     _getCurrentUser();
   }
 
-//Fungsi untuk mendapatkan Id user
-  Future<void> _getCurrentUser() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      setState(() {
-        _userId = user.uid;
-      });
-    }
-  }
+
 
   //Fungsi untuk mendapatkan data Destinasi Berdasarkan Id
   Future<void> _fetchDestinasiData() async {
@@ -93,6 +86,16 @@ class _DetailDestinasiPageState extends State<DetailDestinasiPage> {
     if (data != null) {
       setState(() {
         destinasiData = data;
+      });
+    }
+  }
+
+  //Fungsi untuk mendapatkan Id user
+  Future<void> _getCurrentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        _userId = user.uid;
       });
     }
   }

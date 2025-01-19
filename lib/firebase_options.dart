@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -34,31 +35,31 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAQ_iTdjswIcslTzaBsVVD7AEdQA5OeqOQ',
-    appId: '1:896636292966:web:e5ba0d71c509df476882a7',
-    messagingSenderId: '896636292966',
-    projectId: 'explore-kepri-313f6',
-    authDomain: 'explore-kepri-313f6.firebaseapp.com',
-    storageBucket: 'explore-kepri-313f6.appspot.com',
-    measurementId: 'G-PLV1QGB5Z2',
+  static FirebaseOptions get web => FirebaseOptions(
+        apiKey: dotenv.env['WEB_API_KEY'] ?? '',
+        appId: dotenv.env['WEB_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['WEB_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['WEB_PROJECT_ID'] ?? '',
+        authDomain: dotenv.env['WEB_AUTH_DOMAIN'] ?? '',
+        storageBucket: dotenv.env['WEB_STORAGE_BUCKET'] ?? '',
+        measurementId: dotenv.env['WEB_MEASUREMENT_ID'] ?? '',
+      );
+
+  static FirebaseOptions get android => FirebaseOptions(
+        apiKey: dotenv.env['ANDROID_API_KEY'] ?? '',
+        appId: dotenv.env['ANDROID_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['ANDROID_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['ANDROID_PROJECT_ID'] ?? '',
+        storageBucket: dotenv.env['ANDROID_STORAGE_BUCKET'] ?? '',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBfHx_vtxfAkvVw9Pe0kt-a9hKnZQ3CaJo',
-    appId: '1:896636292966:android:4035ef299be8cfea6882a7',
-    messagingSenderId: '896636292966',
-    projectId: 'explore-kepri-313f6',
-    storageBucket: 'explore-kepri-313f6.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCMEIS3E-pmL8d-vsvZUy0FS0TWBJN14tw',
-    appId: '1:896636292966:ios:8e6adb03b6bc664e6882a7',
-    messagingSenderId: '896636292966',
-    projectId: 'explore-kepri-313f6',
-    storageBucket: 'explore-kepri-313f6.appspot.com',
-    iosBundleId: 'com.example.exploreKepri',
-  );
+ static FirebaseOptions get ios => FirebaseOptions(
+        apiKey: dotenv.env['IOS_API_KEY'] ?? '',
+        appId: dotenv.env['IOS_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['IOS_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['IOS_PROJECT_ID'] ?? '',
+        storageBucket: dotenv.env['IOS_STORAGE_BUCKET'] ?? '',
+        iosBundleId: dotenv.env['IOS_BUNDLE_ID'] ?? '',
+      );
 
 }

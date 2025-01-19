@@ -408,17 +408,16 @@ class _DestinasiPageState extends State<DestinasiPage> {
                                       ),
                                     ),
                                     Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
+                                      bottom: 3,
+                                      left: 3,
+                                      right: 3,
                                       child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(15.0),
-                                          bottomRight: Radius.circular(15.0),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(15.0),
                                         ),
                                         child: BackdropFilter(
                                           filter: ImageFilter.blur(
-                                              sigmaX: 2, sigmaY: 2),
+                                              sigmaX: 3, sigmaY: 3),
                                           child: Container(
                                             height: 55,
                                             decoration: const BoxDecoration(

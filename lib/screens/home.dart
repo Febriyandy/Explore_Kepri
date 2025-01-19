@@ -405,7 +405,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.only(left: 20, bottom: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -421,17 +421,10 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-            ],
-          ),
 
 // Widget menampilkan destinasi wisata rekomendasi
-          Positioned(
-            top: MediaQuery.of(context).size.height *
-                0.43, // Adjust this value as needed
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 200, 
+          Container(
+              height: 210, 
               decoration: BoxDecoration(
                 color: Colors.transparent,
               ),
@@ -471,17 +464,16 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
+                              bottom: 3,
+                              left: 3,
+                              right: 3,
                               child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(15.0),
-                                  bottomRight: Radius.circular(15.0),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(15.0),
                                 ),
                                 child: BackdropFilter(
                                   filter:
-                                      ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                      ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                                   child: Container(
                                     height: 55,
                                     decoration: const BoxDecoration(
@@ -532,11 +524,10 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-          ),
 
-//Teks Rekomendasi Paket wisata
+          //Teks Rekomendasi Paket wisata
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 330, 0, 0),
+            padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -554,11 +545,7 @@ class _HomePageState extends State<HomePage> {
           ),
 
 //Widget menampilkan rekomendasi paket wisata berdasarkan nilai rating tertinggi
-          Positioned(
-            top: 605,
-            left: 0,
-            right: 0,
-            child: Container(
+          Container(
               height: 173,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -716,6 +703,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
+            ],
           ),
         ],
       ),

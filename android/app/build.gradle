@@ -27,6 +27,11 @@ if (flutterVersionCode == null) {
 flutterVersionCode = '1'
 }
 
+def mapsApiKey = localProperties.getProperty('MAPS_API_KEY')
+if (mapsApiKey == null) {
+    mapsApiKey = System.getenv('MAPS_API_KEY')
+}
+
 android {
     namespace = "com.example.explore_kepri"
     compileSdk = flutter.compileSdkVersion
@@ -50,6 +55,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue "string", "MAPS_API_KEY", mapsApiKey
     }
 
     signingConfigs {

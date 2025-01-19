@@ -712,9 +712,8 @@ class _DetailPaketPageState extends State<DetailPaketPage> {
                                     ),
                                   ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 20, 0, 60),
+                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                               child: Container(
-                                width: 200,
                                 height: 45,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(

@@ -49,7 +49,7 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
   }
 
 //Fungsi untuk mendapatkan data paket wisata
-   Future<void> _fetchPaketData() async {
+  Future<void> _fetchPaketData() async {
     DatabaseEvent event = await _databaseReference.child(widget.id).once();
     var data = event.snapshot.value as Map<dynamic, dynamic>?;
     if (data != null) {
@@ -60,28 +60,28 @@ class _DetailPesananPageState extends State<DetailPesananPage> {
   }
 
 //Fungsi untuk mengirimkan data transaksi ke halaman pembayaran
-Future<void> _sendTransactionData() async {
-  try {
-    if (FirebaseAuth.instance.currentUser != null && paketData != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PembayaranPage(
-            id: widget.id,
-            paketData: paketData,
-            date: _dateController.text,
-            jumlahOrang: jumlahOrang,
-            totalPembayaran: totalPembayaran,
+  Future<void> _sendTransactionData() async {
+    try {
+      if (FirebaseAuth.instance.currentUser != null && paketData != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PembayaranPage(
+              id: widget.id,
+              paketData: paketData,
+              date: _dateController.text,
+              jumlahOrang: jumlahOrang,
+              totalPembayaran: totalPembayaran,
+            ),
           ),
-        ),
-      );
-    } else {
-      throw Exception('User data or package data is not available.');
+        );
+      } else {
+        throw Exception('User data or package data is not available.');
+      }
+    } catch (error) {
+      print('Error sending transaction data: $error');
     }
-  } catch (error) {
-    print('Error sending transaction data: $error');
   }
-}
 
 //Fungsi untuk menampilkan kalender  yang di modifikasi
   Future<void> _selectDate(BuildContext context) async {
@@ -154,7 +154,8 @@ Future<void> _sendTransactionData() async {
 
   @override
   Widget build(BuildContext context) {
-    NumberFormat formatter = NumberFormat("#,###"); // Format untuk menambahkan pemisah titik
+    NumberFormat formatter =
+        NumberFormat("#,###"); // Format untuk menambahkan pemisah titik
 
     return Scaffold(
       body: Stack(
@@ -169,434 +170,362 @@ Future<void> _sendTransactionData() async {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(25.0),
-                      bottomRight: Radius.circular(25.0),
-                    ),
-                    child: Container(
-                      color: Colors.white,
-                      width: double.infinity,
-                      height: 250,
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        DetailPaketPage(id: widget.id),
-                                  ),
-                                );
-                              },
-                              child: SvgPicture.asset(
-                                'assets/icons/back.svg',
-                                color:
-                                    blueColor, // assuming blueColor is defined
-                                width: 30.0,
-                                height: 30.0,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(25.0),
+                        bottomRight: Radius.circular(25.0),
+                      ),
+                      child: Container(
+                        color: Colors.white,
+                        width: double.infinity,
+                        height: 250,
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          DetailPaketPage(id: widget.id),
+                                    ),
+                                  );
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/icons/back.svg',
+                                  color:
+                                      blueColor, // assuming blueColor is defined
+                                  width: 30.0,
+                                  height: 30.0,
+                                ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(70, 65, 0, 0),
-                            child: Text(
-                              "Detail Pemesanan",
-                              style: TextStyle(
-                                color:
-                                    darkColor, // assuming darkColor is defined
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Poppins",
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(70, 65, 0, 0),
+                              child: Text(
+                                "Detail Pemesanan",
+                                style: TextStyle(
+                                  color:
+                                      darkColor, // assuming darkColor is defined
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 90.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-
-//Menampilkan foto dari database paket wisata
-                                Container(
-                                  width: 120,
-                                  height: 120,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: AspectRatio(
-                                      aspectRatio: 1.0,
-                                      child: paketData != null &&
-                                              paketData!['images'] != null &&
-                                              paketData!['images'].isNotEmpty
-                                          ? Image.network(
-                                              paketData!['images'][0],
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Container(), // Handle if image is not available
+                            Padding(
+                              padding: const EdgeInsets.only(top: 90.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  //Menampilkan foto dari database paket wisata
+                                  Container(
+                                    width: 120,
+                                    height: 120,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: AspectRatio(
+                                        aspectRatio: 1.0,
+                                        child: paketData != null &&
+                                                paketData!['images'] != null &&
+                                                paketData!['images'].isNotEmpty
+                                            ? Image.network(
+                                                paketData!['images'][0],
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Container(), // Handle if image is not available
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: 20),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
+                                  SizedBox(width: 20),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      //Menampilkan Nama Paket Wisata
+                                      Text(
+                                        paketData != null
+                                            ? 'Paket Wisata \n${paketData!['nama_paket']}'
+                                            : 'Paket Wisata', // Handle if paketData is null
+                                        style: TextStyle(
+                                          color: darkColor,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
 
-//Menampilkan Nama Paket Wisata
-                                    Text(
-                                      paketData != null
-                                          ? 'Paket Wisata \n${paketData!['nama_paket']}'
-                                          : 'Paket Wisata', // Handle if paketData is null
-                                      style: TextStyle(
-                                        color: darkColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Poppins",
+                                      //Menampilkan Lama kegiatan
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Text(
+                                          paketData != null
+                                              ? 'Lama Kegiatan : ${paketData!['lama_kegiatan']}'
+                                              : 'Lama Kegiatan :', // Handle if paketData is null
+                                          style: TextStyle(
+                                            color: darkColor,
+                                            fontSize: 14,
+                                            fontFamily: "Poppins",
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    //Form Pemesanan Paket Wisata
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Text(
+                        "Formulir Pemesanan",
+                        style: TextStyle(
+                          color: darkColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              width: 350,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20.0),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(1),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 0, 0, 10),
+                                      child: Text(
+                                        "Tanggal",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                        ),
                                       ),
                                     ),
 
-//Menampilkan Lama kegiatan
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10.0),
-                                      child: Text(
-                                        paketData != null
-                                            ? 'Lama Kegiatan : ${paketData!['lama_kegiatan']}'
-                                            : 'Lama Kegiatan :', // Handle if paketData is null
-                                        style: TextStyle(
-                                          color: darkColor,
+                                    //Field Untuk menginputkan tanggal
+                                    TextFormField(
+                                      controller: _dateController,
+                                      readOnly: true,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Mohon pilih tanggal';
+                                        }
+                                        return null;
+                                      },
+                                      onTap: () {
+                                        _selectDate(context);
+                                      },
+                                      style: TextStyle(
+                                        color: darkColor,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins",
+                                      ),
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12.5, horizontal: 14),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.none),
+                                        ),
+                                        hintText: "Pilih Tanggal",
+                                        hintStyle: TextStyle(
+                                          color: grayColor,
                                           fontSize: 14,
                                           fontFamily: "Poppins",
+                                        ),
+                                        fillColor:
+                                            Colors.white.withOpacity(0.5),
+                                        filled: true,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: darkColor, width: 2.0),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 20, 0, 10),
+                                      child: Text(
+                                        "Jumlah Orang",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                        ),
+                                      ),
+                                    ),
+
+                                    //Field untuk menginputkan jumlah orang
+                                    TextFormField(
+                                      controller: _jumlahOrangController,
+                                      keyboardType: TextInputType.number,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Mohon isi jumlah orang';
+                                        }
+                                        int? number = int.tryParse(value);
+                                        if (number == null) {
+                                          return 'Masukkan angka yang valid';
+                                        }
+                                        if (number < 2 || number > 11) {
+                                          return 'Jumlah orang harus antara 2-11';
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        setState(() {
+                                          jumlahOrang =
+                                              int.tryParse(value) ?? 0;
+                                          calculateTotalPembayaran();
+                                        });
+                                      },
+                                      style: TextStyle(
+                                        color: darkColor,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins",
+                                      ),
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12.5, horizontal: 14),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.none),
+                                        ),
+                                        hintText: "Min 2, Max 11",
+                                        hintStyle: TextStyle(
+                                          color: grayColor,
+                                          fontSize: 14,
+                                          fontFamily: "Poppins",
+                                        ),
+                                        fillColor:
+                                            Colors.white.withOpacity(0.5),
+                                        filled: true,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: darkColor, width: 2.0),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 20, 0, 10),
+                                      child: Text(
+                                        "Nomor WhatsApp",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: darkColor,
+                                        ),
+                                      ),
+                                    ),
+
+                                    //Field untuk menginputkan jumlah orang
+                                    TextFormField(
+                                      controller: _whatsappController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Mohon isi nomor WhatsApp';
+                                        }
+                                        if (!value.startsWith('628')) {
+                                          return 'Nomor harus diawali dengan 628';
+                                        }
+                                        if (value.length < 10 ||
+                                            value.length > 13) {
+                                          return 'Nomor WhatsApp tidak valid';
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.phone,
+                                      style: TextStyle(
+                                        color: darkColor,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins",
+                                      ),
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12.5, horizontal: 14),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: const BorderSide(
+                                              width: 0,
+                                              style: BorderStyle.none),
+                                        ),
+                                        hintText: "628.....",
+                                        hintStyle: TextStyle(
+                                          color: grayColor,
+                                          fontSize: 14,
+                                          fontFamily: "Poppins",
+                                        ),
+                                        fillColor:
+                                            Colors.white.withOpacity(0.5),
+                                        filled: true,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                              color: darkColor, width: 2.0),
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                      height:
-                          20),
-
-//Form Pemesanan Paket Wisata
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(
-                      "Formulir Pemesanan",
-                      style: TextStyle(
-                        color: darkColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Poppins",
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            width: 350,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20.0),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(1),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0, 0, 0, 10),
-                                    child: Text(
-                                      "Tanggal",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: darkColor,
-                                      ),
-                                    ),
-                                  ),
-
-//Field Untuk menginputkan tanggal
-                                  TextFormField(
-                                    controller: _dateController,
-                                    readOnly: true,
-                                    onTap: () {
-                                      _selectDate(context);
-                                    },
-                                    style: TextStyle(
-                                      color: darkColor,
-                                      fontSize: 14,
-                                      fontFamily: "Poppins",
-                                    ),
-                                    decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets
-                                              .symmetric(
-                                          vertical: 12.5, horizontal: 14),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        borderSide: const BorderSide(
-                                            width: 0,
-                                            style: BorderStyle.none),
-                                      ),
-                                      hintText: "Pilih Tanggal",
-                                      hintStyle: TextStyle(
-                                        color: grayColor,
-                                        fontSize: 14,
-                                        fontFamily: "Poppins",
-                                      ),
-                                      fillColor: Colors.white
-                                          .withOpacity(0.5),
-                                      filled: true,
-                                      focusedBorder:
-                                          OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                10.0),
-                                        borderSide: BorderSide(
-                                            color: darkColor,
-                                            width: 2.0),
-                                      ),
-                                      
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0, 20, 0, 10),
-                                    child: Text(
-                                      "Jumlah Orang",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                        fontWeight:
-                                            FontWeight.bold,
-                                        color: darkColor,
-                                      ),
-                                    ),
-                                  ),
-
-//Field untuk menginputkan jumlah orang
-                                  TextFormField(
-                                    controller:
-                                        _jumlahOrangController,
-                                    keyboardType:
-                                        TextInputType.number,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        jumlahOrang = int.tryParse(
-                                                value) ??
-                                            0;
-                                        calculateTotalPembayaran();
-                                      });
-                                    },
-                                    style: TextStyle(
-                                      color: darkColor,
-                                      fontSize: 14,
-                                      fontFamily: "Poppins",
-                                    ),
-                                    decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets
-                                              .symmetric(
-                                          vertical: 12.5, horizontal: 14),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                10.0),
-                                        borderSide: const BorderSide(
-                                            width: 0,
-                                            style: BorderStyle.none),
-                                      ),
-                                      hintText: "Min 2, Max 11",
-                                      hintStyle: TextStyle(
-                                        color: grayColor,
-                                        fontSize: 14,
-                                        fontFamily: "Poppins",
-                                      ),
-                                      fillColor: Colors.white
-                                          .withOpacity(0.5),
-                                      filled: true,
-                                      focusedBorder:
-                                          OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                10.0),
-                                        borderSide: BorderSide(
-                                            color: darkColor,
-                                            width: 2.0),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0, 20, 0, 10),
-                                    child: Text(
-                                      "Nomor WhatsApp",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                        fontWeight:
-                                            FontWeight.bold,
-                                        color: darkColor,
-                                      ),
-                                    ),
-                                  ),
-
-//Field untuk menginputkan jumlah orang
-                                  TextFormField(
-                                    controller: _whatsappController,
-                                    keyboardType:
-                                        TextInputType.phone,
-                                    style: TextStyle(
-                                      color: darkColor,
-                                      fontSize: 14,
-                                      fontFamily: "Poppins",
-                                    ),
-                                    decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets
-                                              .symmetric(
-                                          vertical: 12.5, horizontal: 14),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                10.0),
-                                        borderSide: const BorderSide(
-                                            width: 0,
-                                            style: BorderStyle.none),
-                                      ),
-                                      hintText: "628.....",
-                                      hintStyle: TextStyle(
-                                        color: grayColor,
-                                        fontSize: 14,
-                                        fontFamily: "Poppins",
-                                      ),
-                                      fillColor: Colors.white
-                                          .withOpacity(0.5),
-                                      filled: true,
-                                      focusedBorder:
-                                          OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                10.0),
-                                        borderSide: BorderSide(
-                                            color: darkColor,
-                                            width: 2.0),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-//Button untuk menampilkan totol harga dan melakukan pembayaran
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              height: 100,
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0),
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment:
-                      CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Total",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: "Poppins",
-                            color: darkColor,
-                          ),
-                        ),
-                        Text(
-                          "Rp ${formatter.format(totalPembayaran)}", // Menggunakan formatter untuk menambahkan pemisah titik
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.bold,
-                            color: darkColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: 200,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            darkColor,
-                            primary
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(10.0),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            _sendTransactionData(); // Call method to send data
-                          },
-                          borderRadius:
-                              BorderRadius.circular(10.0),
-                          child: const Center(
-                            child:  Text(
-                              "Bayar Sekarang",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: "Poppins",
-                                fontSize: 16,
-                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -605,6 +534,88 @@ Future<void> _sendTransactionData() async {
                     ),
                   ],
                 ),
+              ),
+            ),
+          ),
+//Button untuk menampilkan totol harga dan melakukan pembayaran
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, -3),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Total",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: "Poppins",
+                          color: darkColor,
+                        ),
+                      ),
+                      Text(
+                        "Rp ${formatter.format(totalPembayaran)}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold,
+                          color: darkColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 200,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [darkColor, primary],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          _sendTransactionData(); // Call method to send data
+                        },
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: const Center(
+                          child: Text(
+                            "Bayar Sekarang",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
